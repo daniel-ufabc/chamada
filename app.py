@@ -40,5 +40,4 @@ def encerraSessao():
     func_aux.limpaDicionario(session)
     return redirect('/')
 
-
 app.run()
