@@ -7,3 +7,11 @@ def dicionario(colunas, valores):
         resposta.append(dicionario)
     return resposta
 
+def limpaDicionario(dicionario):
+    lista_remocao = []
+    for chave in dicionario:
+        lista_remocao.append(chave)
+    for chave in lista_remocao:
+        dicionario.pop(chave)
+
+

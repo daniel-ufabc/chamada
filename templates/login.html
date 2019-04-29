@@ -9,7 +9,7 @@
 	<div class="container">
 		<div style="width: 500px; height: 400px; margin-top: 200px;" class="mx-auto">
 			<h1 class="text-center p-5">Login</h1>
-			<form method="post">
+			<form method="post" action="/autentica">
 				<div class="form-group">
 					<div class="input-group">
 						<div class="input-group-prepend">
@@ -26,6 +26,17 @@
 						<input id="senha" class="form-control" type="password" name="senha" placeholder="Digite sua senha">	
 					</div>
 				</div>
+
+				{% with messages = get_flashed_messages() %}
+					{% if messages %}
+						{% for mensagem in messages %}
+							<div class="form-group">
+								<span class="text-danger">{{ mensagem }}</span>
+							</div>
+						{% endfor %}
+					{% endif %}
+				{% endwith %}
+
 				<div class="form-group">
 					<input class="form-control btn btn-primary mt-3" type="submit" value="Entrar">
 				</div>
