@@ -10,5 +10,3 @@ def buscaHorarioTurma(id_turma):
     mycursor.execute(query, turma)
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
-
-print(buscaHorarioTurma(6))

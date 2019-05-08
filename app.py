@@ -1,7 +1,7 @@
 from autentica_usuario import autenticaUsuario
 from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal
 from banco_tb_usuarios import buscaUsuario
-from banco_tb_turmas import listaTurmas
+from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma
 from banco_turma_horarios import buscaHorarioTurma
 from flask import Flask, render_template, request, redirect, session, flash
 
@@ -42,6 +42,24 @@ def autenticaLogin():
 @app.route('/logout')
 def encerraSessao():
     limpaDicionario(session)
+    return redirect('/')
+
+@app.route('/arquivar_turma', methods=['POST'])
+def arquivaTurma():
+    if 'id_turma_arquivar' in request.form:
+        id_turma = request.form['id_turma_arquivar']
+        turma = buscaTurma(id_turma)
+        desativaTurma(id_turma)
+        flash('{} arquivado(a) com sucesso !'.format(turma[0]['nome_turma']))
+    return redirect('/')
+
+@app.route('/desarquivar_turma', methods=['POST'])
+def desarquivaTurma():
+    if 'id_turma_desarquivar' in request.form:
+        id_turma = request.form['id_turma_desarquivar']
+        turma = buscaTurma(id_turma)
+        ativaTurma(id_turma)
+        flash('{} desarquivado(a) com sucesso !'.format(turma[0]['nome_turma']))
     return redirect('/')
 
 app.run()

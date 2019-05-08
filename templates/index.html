@@ -21,8 +21,21 @@
 		</nav>
 	</div>
 
+
+
 	<!-- Conteudo -->
 	<div class="container my-5">
+
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				{% for mensagem in messages %}
+					<div class="form-group my-0">
+						<p class="text-success text-center">{{ mensagem }}</p>
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
 
 
 		<!-- Foto upload / Formulario nova chamada -->
@@ -213,10 +226,21 @@
 								</div>
 								<div class="collapse" id="{{ removeEspaco(turma['nome_turma']) }}">
 									<div class="card-body">
-										<p>
-											<span>Campus: </span>
-											<span>{{ turma['campus'].lower().title() }}</span>
-										</p>
+										<div class="row">
+											<div class="col-6">
+												<p class="text-left">
+													<span>Campus: </span>
+													<span class="text-capitalize">{{ turma['campus'] }}</span>
+												</p>
+											</div>
+											<div class="col-6 text-right">
+												<form action="/arquivar_turma" method="post">
+													<input type="hidden" name="id_turma_arquivar" value="{{ turma['id_turma'] }}">
+													<button class="btn btn-outline-danger" type="submit"><i class="fas fa-trash"></i></button>
+												</form>
+											</div>
+										</div>
+
 										<p>
 											<span>Alunos: </span>
 											<span>{{ turma['qtd_alunos'] }}</span>
@@ -231,13 +255,13 @@
 													</tr>
 												</thead>
 												<tbody>
-					{% for horario in horarios%}
-													<tr>
-														<td>{{ horario['dia_da_semana'] }}</td>
-														<td>{{ semanal(horario['id_dia_semanal'])}}</td>
-														<td>{{ horario['horario'] }}</td>
-													</tr>
-					{% endfor %}
+													{% for horario in horarios%}
+														<tr>
+															<td>{{ horario['dia_da_semana'] }}</td>
+															<td>{{ semanal(horario['id_dia_semanal'])}}</td>
+															<td>{{ horario['horario'] }}<span> as </span>{{ horario['horario']+2 }}</td>
+														</tr>
+													{% endfor %}
 												</tbody>
 											</table>
 										</p>
@@ -271,14 +295,22 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>Estrutura da matéria</td>
-								<td><button class="btn btn-warning">Desarquivar</button></td>
-							</tr>
-							<tr>
-								<td>Bases conceituais da energia</td>
-								<td><button class="btn btn-warning">Desarquivar</button></td>
-							</tr>
+							{% for turma in lista_de_turmas %}
+								{% if turma['id_status'] == 0 %}
+									<tr>
+										<td>
+											{{ turma['nome_turma'] }}
+										</td>
+										<td>
+											<form action="/desarquivar_turma" method="post">
+												<input type="hidden" name="id_turma_desarquivar" value="{{ turma['id_turma'] }}">
+												<button class="btn btn-warning" type="submit">Desarquivar</button>
+											</form>
+										</td>
+									</tr>
+								{% endif %}
+							{% endfor %}
+						</tbody>
 					</table>
 				</div>
 			</div>

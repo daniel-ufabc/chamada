@@ -12,7 +12,7 @@ def criaTurma(id_usuario, nome_turma, campus):
 
 def ativaTurma(id_turma):
     turma = (id_turma,)
-    query = "UPDATE tb_turmas SET id_status = 0 WHERE id_turma = %s"
+    query = "UPDATE tb_turmas SET id_status = 1 WHERE id_turma = %s"
     mydb = conecta()
     mycursor = mydb.cursor()
     mycursor.execute(query, turma)
@@ -21,7 +21,7 @@ def ativaTurma(id_turma):
 
 def desativaTurma(id_turma):
     turma = (id_turma,)
-    query = "UPDATE tb_turmas SET id_status = 1 WHERE id_turma = %s"
+    query = "UPDATE tb_turmas SET id_status = 0 WHERE id_turma = %s"
     mydb = conecta()
     mycursor = mydb.cursor()
     mycursor.execute(query, turma)
@@ -36,3 +36,13 @@ def listaTurmas(id_usuario):
     mycursor.execute(query, usuario)
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
+
+def buscaTurma(id_turma):
+    turma = (id_turma,)
+    query = "SELECT * FROM tb_turmas WHERE id_turma = %s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, turma)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
+
