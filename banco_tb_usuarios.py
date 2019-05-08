@@ -1,11 +1,11 @@
-import conecta
-import funcoes_auxiliares as func_aux
+from conecta import conecta
+from funcoes_auxiliares import dicionario
 
 def buscaUsuario(email, senha):
     login = (email, senha)
     query = "SELECT * FROM tb_usuarios WHERE email=%s AND senha=%s"
-    mydb = conecta.conecta()
+    mydb = conecta()
     mycursor = mydb.cursor()
     mycursor.execute(query, login)
-    resposta = func_aux.dicionario(mycursor.description, mycursor.fetchall())
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta

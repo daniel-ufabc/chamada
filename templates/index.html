@@ -199,117 +199,54 @@
 			</div>
 			<div class="card-body">
 
-				<!-- Uma turma CARD -->
-				<div class="card my-2">
-					<div class="card-header">
-						<h6>
-							<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#fuv">
-								Funções de uma variavel								
-							</button>
-						</h6>
-					</div>
-					<div class="collapse" id="fuv">
-						<div class="card-body">
-							<p>
-								<span>Campus: </span>
-								<span>São Bernardo</span>
-							</p>
-							<p>
-								<span>Alunos: </span>
-								<span>70</span>
-							</p>
-							<p>
-								<table class="table">
-									<thead>
-										<tr>
-											<th>Dia da semana</th>
-											<th>Semanal</th>
-											<th>Horario do dia</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Quinta-feira</td>
-											<td>I</td>
-											<td>19 as 21</td>
-										</tr>
-										<tr>
-											<td>Sexta-feira</td>
-											<td>I</td>
-											<td>21 as 23</td>
-										</tr>
-										<tr>
-											<td>Segunda-feira</td>
-											<td>II</td>
-											<td>19 as 21</td>
-										</tr>
-										<tr>
-											<td>Sexta-feira</td>
-											<td>II</td>
-											<td>19 as 21</td>
-										</tr>
-									</tbody>
-								</table>
-							</p>
-						</div>
-					</div>	
-				</div>
+			{% for turma in lista_de_turmas %}
+				{% if turma['id_status'] == 1 %}
+					{% set horarios = buscaHorarioTurma(turma['id_turma']) %}
+					<!-- Uma turma CARD -->
+					<div class="card my-2">
+								<div class="card-header">
+									<h6>
+										<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ removeEspaco(turma['nome_turma']) }}">
+											{{ turma['nome_turma'].lower().capitalize() }}
+										</button>
+									</h6>
+								</div>
+								<div class="collapse" id="{{ removeEspaco(turma['nome_turma']) }}">
+									<div class="card-body">
+										<p>
+											<span>Campus: </span>
+											<span>{{ turma['campus'].lower().title() }}</span>
+										</p>
+										<p>
+											<span>Alunos: </span>
+											<span>{{ turma['qtd_alunos'] }}</span>
+										</p>
+										<p>
+											<table class="table">
+												<thead>
+													<tr>
+														<th>Dia da semana</th>
+														<th>Semanal</th>
+														<th>Horario do dia</th>
+													</tr>
+												</thead>
+												<tbody>
+					{% for horario in horarios%}
+													<tr>
+														<td>{{ horario['dia_da_semana'] }}</td>
+														<td>{{ semanal(horario['id_dia_semanal'])}}</td>
+														<td>{{ horario['horario'] }}</td>
+													</tr>
+					{% endfor %}
+												</tbody>
+											</table>
+										</p>
+									</div>
+								</div>
+							</div>
+				{% endif %}
+			{% endfor %}
 
-				<!-- Uma turma CARD -->
-				<div class="card my-2">
-					<div class="card-header">
-						<h6>
-							<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#bcc">
-								Bases computacionais da ciência								
-							</button>
-						</h6>
-					</div>
-					<div class="collapse" id="bcc">
-						<div class="card-body">
-							<p>
-								<span>Campus: </span>
-								<span>Santo André</span>
-							</p>
-							<p>
-								<span>Alunos: </span>
-								<span>30</span>
-							</p>
-							<p>
-								<table class="table">
-									<thead>
-										<tr>
-											<th>Dia da semana</th>
-											<th>Semanal</th>
-											<th>Horario do dia</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Segunda-feira</td>
-											<td>I</td>
-											<td>8 as 10</td>
-										</tr>
-										<tr>
-											<td>Sexta-feira</td>
-											<td>I</td>
-											<td>10 as 12</td>
-										</tr>
-										<tr>
-											<td>Segunda-feira</td>
-											<td>II</td>
-											<td>8 as 10</td>
-										</tr>
-										<tr>
-											<td>Sexta-feira</td>
-											<td>II</td>
-											<td>10 as 12</td>
-										</tr>
-									</tbody>
-								</table>
-							</p>
-						</div>
-					</div>	
-				</div>
 			</div>
 		</div>
 

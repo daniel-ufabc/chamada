@@ -1,7 +1,7 @@
 def dicionario(colunas, valores):
     resposta = []
     for valor in valores:
-        dicionario= {}
+        dicionario = {}
         for i in range(len(colunas)):
             dicionario[colunas[i][0]] = valor[i]
         resposta.append(dicionario)
@@ -13,5 +13,17 @@ def limpaDicionario(dicionario):
         lista_remocao.append(chave)
     for chave in lista_remocao:
         dicionario.pop(chave)
+
+def semanal(dia_semanal):
+    if dia_semanal <= 7:
+        return "I"
+    else:
+        return "II"
+
+def removeEspaco(texto):
+    return texto.replace(" ", "")
+
+
+
 
 
