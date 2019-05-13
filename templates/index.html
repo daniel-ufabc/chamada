@@ -407,7 +407,6 @@
                     image_preview.style.width = "100%";
                     div_upload_photo.innerHTML = "";
                     image_preview.setAttribute("id", "img_preview");
-                    image_preview.setAttribute("onclick", "fa.call(this)");
                     div_upload_photo.appendChild(image_preview);
                     div_upload_photo.className = "my-3";
                     div_upload_photo.style = "border: 1px solid red";
@@ -424,13 +423,13 @@
                 var input_horario = document.getElementById("input_horario");
                 metadados(img_preview, input_arquivo, input_data_chamada, input_horario);
                 clearTimeout(intervalo_espera);
-            }, 100);
+            }, 800);
             
         }
         
         
         function desabilita_campo(booleano){
-            var id_inputs = ["input_arquivo", "input_data_chamada", "input_horario", "input_turma"];
+            var id_inputs = ["input_data_chamada", "input_horario", "input_turma"];
             for(var i=0; i < id_inputs.length; i++){
                 var input = document.getElementById(id_inputs[i]);
                 booleano ? input.setAttribute("disabled", ""): input.removeAttribute("disabled");
