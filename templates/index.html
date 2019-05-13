@@ -21,8 +21,6 @@
 		</nav>
 	</div>
 
-
-
 	<!-- Conteudo -->
 	<div class="container my-5">
 
@@ -38,7 +36,7 @@
 
 
 
-		<!-- Foto upload / Formulario nova chamada -->
+		<!-- Gerador de relatorio -->
 		<div class="card text-center my-5">
 			<div class="card-body">
 				<h5 class="card-title">Relatórios</h5>
@@ -56,17 +54,58 @@
 					<div class="card-body">
 						<h5 class="card-title">Nova chamada</h5>
 						<p class="card-text">Realize o upload de uma foto e uma nova chamada será gerada automaticamente</p>
-						<form>
-							<div class="input-group">
-								<div class="input-group-prepend">
-									<span class="input-group-text">Upload</span>
-								</div>
-								<div class="custom-file">
-									<input type="file" class="custom-file-input" id="inputFoto">
-									<label class="custom-file-label" for="inputFoto">Escolher foto</label>
-								</div>
-							</div>
-						</form>
+                        <div id="div_upload_photo">
+                            <button style="border: 1px solid red" id="button_add" class="btn btn-transparent" type="button">
+                                <div class="text-center">
+                                    <img style="width: 25%" src="../static/css/photo-upload-icon.png">
+                                </div>
+                            </button>
+                        </div>
+                        
+                        <div id="formulario_chamada" style="display: none">
+                            <form>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">Arquivo: </div>
+                                            </div>
+                                            <input id="input_arquivo" class="form-control" type="text" disabled>
+                                        </div>
+                                        <div class="input-group my-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">Data da chamada: </div>
+                                            </div>
+                                            <input id="input_data_chamada" class="form-control" type="date" disabled>
+                                        </div>
+                                        <div class="input-group my-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">Horario: </div>
+                                            </div>
+                                            <input id="input_horario" class="form-control" type="time" disabled>
+                                        </div>
+                                        <div class="input-group my-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">Turma: </div>
+                                            </div>
+                                            <select id="input_turma" class="custom-select" disabled>
+                                                <option selected>FVV</option>
+                                                <option>FETERM</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <button type="button" class="btn btn-outline-dark btn-lg py-4" onclick="desabilita_campo(false)">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-lg py-4 my-3" onclick="cancelaUpload()">X</button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-lg btn-block mt-3">Cadastrar</button>
+                                <input id="input_file" type="file" hidden="hidden" onchange="showImage.call(this)">
+                            </form>
+                        </div>
+                                                
 					</div>
 				</div>
 			</div>
@@ -318,6 +357,119 @@
 
 
 	</div>
+    
+    <script src="../static/js/exif.js" type="text/javascript"></script>
+    
+    <script>
+        function metadados(tag_img, input_arquivo, input_data_chamada, input_horario) {
+                EXIF.getData(tag_img, function() {
+                    myData = tag_img;
+                    var input_file = document.getElementById("input_file");
+                    var nome_arquivo = input_file.files[0]['name'];
+                    var data_arquivo = myData.exifdata.DateTimeOriginal.split(" ")[0];
+                    var horario_arquivo = myData.exifdata.DateTimeOriginal.split(" ")[1];
+                    input_arquivo.setAttribute("value", nome_arquivo);
+                    input_data_chamada.setAttribute("value", formataData(data_arquivo));
+                    input_horario.setAttribute("value", formataHorario(horario_arquivo));
+                    console.log(myData.exifdata);
+                });
+            }
+        
+        function formataData(data){
+            var data = data.replace(":", "-");
+            return data.replace(":", "-");
+        }
+        
+        function formataHorario(horario){
+            return horario.substring(0, 5);
+        }
+        
+    </script>
+    
+    
+    <script>
+        
+        const button_add = document.getElementById("button_add");
+        const input_file = document.getElementById("input_file");
+        const formulario_chamada = document.getElementById("formulario_chamada");
+        
+        
+        button_add.addEventListener("click", function(){input_file.click();});
+        
+        
+        function showImage(){
+            if(this.files && this.files[0]){
+                var obj = new FileReader();
+                obj.onload = function(data){
+                    var div_upload_photo = document.getElementById("div_upload_photo");
+                    var image_preview = document.createElement("img");
+                    image_preview.src = data.target.result;
+                    image_preview.style.width = "100%";
+                    div_upload_photo.innerHTML = "";
+                    image_preview.setAttribute("id", "img_preview");
+                    image_preview.setAttribute("onclick", "fa.call(this)");
+                    div_upload_photo.appendChild(image_preview);
+                    div_upload_photo.className = "my-3";
+                    div_upload_photo.style = "border: 1px solid red";
+                }
+                obj.readAsDataURL(this.files[0]);
+                formulario_chamada.style.display = "block";
+            }
+            
+            
+            var intervalo_espera = setTimeout(function(){
+                var img_preview = document.getElementById("img_preview");
+                var input_arquivo = document.getElementById("input_arquivo");
+                var input_data_chamada = document.getElementById("input_data_chamada");
+                var input_horario = document.getElementById("input_horario");
+                metadados(img_preview, input_arquivo, input_data_chamada, input_horario);
+                clearTimeout(intervalo_espera);
+            }, 100);
+            
+        }
+        
+        
+        function desabilita_campo(booleano){
+            var id_inputs = ["input_arquivo", "input_data_chamada", "input_horario", "input_turma"];
+            for(var i=0; i < id_inputs.length; i++){
+                var input = document.getElementById(id_inputs[i]);
+                booleano ? input.setAttribute("disabled", ""): input.removeAttribute("disabled");
+            }
+        }
+        
+        
+        function cancelaUpload(){
+            var div_upload_photo = document.getElementById("div_upload_photo");
+            var formulario_chamada = document.getElementById("formulario_chamada");
+            div_upload_photo.innerHTML = "";
+            formulario_chamada.style.display = "none";
+            desabilita_campo(true);
+            div_upload_photo.appendChild(criaBotao_div_upload_photo());
+        }
+        
+        
+        function criaBotao_div_upload_photo(){
+            var img = document.createElement("img");
+            var botao = document.createElement("button");
+            var div = document.createElement("div");
+            img.src = "../static/css/photo-upload-icon.png";
+            img.style.width = "25%";
+            div.setAttribute("class", "text-center");
+            botao.setAttribute("class", "btn btn-transparent");
+            botao.setAttribute("type", "button");
+            botao.setAttribute("id", "button_add");
+            botao.addEventListener("click", function(){input_file.click();});
+            botao.appendChild(div);
+            div.appendChild(img);
+            return botao;
+        }
+        
+        
+        
+    </script>
+            
+    
+    
 
 </body>
 </html>
