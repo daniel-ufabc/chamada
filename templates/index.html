@@ -63,34 +63,34 @@
                         </div>
                         
                         <div id="formulario_chamada" style="display: none">
-                            <form>
+                            <form action="/criar_chamada" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-10">
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text">Arquivo: </div>
                                             </div>
-                                            <input id="input_arquivo" class="form-control" type="text" disabled>
+                                            <input id="input_arquivo" name="nome_arquivo" class="form-control" type="text" readonly>
                                         </div>
                                         <div class="input-group my-2">
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text">Data da chamada: </div>
                                             </div>
-                                            <input id="input_data_chamada" class="form-control" type="date" disabled>
+                                            <input id="input_data_chamada" name="input_data_chamada" class="form-control" type="date" readonly>
                                         </div>
                                         <div class="input-group my-2">
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text">Horario: </div>
                                             </div>
-                                            <input id="input_horario" class="form-control" type="time" disabled>
+                                            <input id="input_horario" class="form-control" type="time" readonly>
                                         </div>
                                         <div class="input-group my-2">
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text">Turma: </div>
                                             </div>
-                                            <select id="input_turma" class="custom-select" disabled>
-                                                <option selected>FVV</option>
-                                                <option>FETERM</option>
+                                            <select id="input_turma" name="id_turma" class="custom-select" disabled>
+                                                <option selected value="7">FVV</option>
+                                                <option value="9">FETERM</option>
                                             </select>
                                         </div>
                                     </div>
@@ -101,8 +101,8 @@
                                         <button type="button" class="btn btn-danger btn-lg py-4 my-3" onclick="cancelaUpload()">X</button>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary btn-lg btn-block mt-3">Cadastrar</button>
-                                <input id="input_file" type="file" hidden="hidden" onchange="showImage.call(this)">
+                                <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Cadastrar</button>
+                                <input name="foto_upload" id="input_file" type="file" hidden="hidden" onchange="showImage.call(this)">
                             </form>
                         </div>
                                                 
@@ -362,13 +362,13 @@
     
     <script>
         function metadados(tag_img, input_arquivo, input_data_chamada, input_horario) {
+                var nome_arquivo = input_file.files[0]['name'];
+                input_arquivo.setAttribute("value", nome_arquivo);
                 EXIF.getData(tag_img, function() {
                     myData = tag_img;
                     var input_file = document.getElementById("input_file");
-                    var nome_arquivo = input_file.files[0]['name'];
                     var data_arquivo = myData.exifdata.DateTimeOriginal.split(" ")[0];
                     var horario_arquivo = myData.exifdata.DateTimeOriginal.split(" ")[1];
-                    input_arquivo.setAttribute("value", nome_arquivo);
                     input_data_chamada.setAttribute("value", formataData(data_arquivo));
                     input_horario.setAttribute("value", formataHorario(horario_arquivo));
                     console.log(myData.exifdata);
@@ -429,11 +429,22 @@
         
         
         function desabilita_campo(booleano){
-            var id_inputs = ["input_data_chamada", "input_horario", "input_turma"];
-            for(var i=0; i < id_inputs.length; i++){
-                var input = document.getElementById(id_inputs[i]);
-                booleano ? input.setAttribute("disabled", ""): input.removeAttribute("disabled");
-            }
+        	console.log(booleano);
+        	var input_data_chamada = document.getElementById('input_data_chamada');
+        	var input_horario = document.getElementById('input_horario');
+        	var input_turma = document.getElementById('input_turma');
+        	if (booleano) {
+        		input_data_chamada.setAttribute('readonly', '');
+        		input_horario.setAttribute('readonly', '');
+        		input_turma.setAttribute('disabled', '');
+        	}
+        	else {
+        		input_data_chamada.removeAttribute('readonly');
+        		input_horario.removeAttribute('readonly');
+        		input_turma.removeAttribute('disabled');
+        	}
+
+
         }
         
         

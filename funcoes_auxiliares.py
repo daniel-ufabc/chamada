@@ -23,6 +23,11 @@ def semanal(dia_semanal):
 def removeEspaco(texto):
     return texto.replace(" ", "")
 
+def nomeArquivo(id_chamada, nome_arquivo):
+    extensao = nome_arquivo.split('.')
+    extensao = extensao[len(extensao)-1]
+    nome_final = "{}.{}".format(id_chamada, extensao)
+    return nome_final
 
 
 

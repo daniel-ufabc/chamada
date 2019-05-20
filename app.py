@@ -1,10 +1,13 @@
 from autentica_usuario import autenticaUsuario
-from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal
+from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal, nomeArquivo
 from banco_tb_usuarios import buscaUsuario
 from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma
+from banco_tb_chamadas import buscaChamada, cadastraNovaChamada
 from banco_turma_horarios import buscaHorarioTurma
+from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto
+from banco_tb_coordenadas import detectaFaces
 from flask import Flask, render_template, request, redirect, session, flash
-
+from openCV import dimensoesImagem
 
 app = Flask(__name__)
 app.secret_key = 'appufabc'
@@ -65,5 +68,24 @@ def desarquivaTurma():
         ativaTurma(id_turma)
         flash('{} desarquivado(a) com sucesso !'.format(turma[0]['nome_turma']))
     return redirect('/')
+
+@app.route('/criar_chamada', methods=['POST'])
+def criarChamada():
+    data_chamada = request.form['input_data_chamada']
+    id_turma = request.form['id_turma']
+    id_usuario = session['id_usuario']
+    cadastraNovaChamada(id_usuario, id_turma, data_chamada)
+    info_chamada = buscaChamada(id_usuario, id_turma, data_chamada)[0]
+    nome_arquivo = nomeArquivo(info_chamada['id_chamada'], request.form['nome_arquivo'])
+    arquivo = request.files['foto_upload']
+    cadastraNovafoto(nome_arquivo, id_usuario)
+    arquivo.save('uploads/{}'.format(nome_arquivo))
+    dimensoes = dimensoesImagem(nome_arquivo)
+    atualizaDimensao(dimensoes['largura'], dimensoes['altura'], nome_arquivo)
+    info_foto = buscaFoto(nome_arquivo)[0]
+    detectaFaces(nome_arquivo, id_usuario, info_foto['id_foto'])
+    return redirect('/')
+
+
 
 app.run()
