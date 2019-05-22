@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+      <meta charset="utf-8">
+      <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+      <title>Sistema de contagem de faltas</title>
+      <style type="text/css">
+         #imagem{
+         background-image: url('../uploads/43.jpg'); 
+         width: 640px; 
+         height: 480px; 
+         border: 1px solid red;
+         }		
+      </style>
+   </head>
+   <body>
+      <!-- Topo -->
+      <div class="container">
+         <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">
+            <img src="../static/css/ufabc-logo.svg" width="50" height="50" class="mr-2"><span>UFABC</span>
+            </a>
+            <a href="/logout" class="btn btn-outline-danger">Sair</a>
+         </nav>
+      </div>
+      <!-- Conteudo -->
+      <div class="container my-5">
+         <div>
+            <h1 class="display-4 text-center text-success" id="modo">Modo visualizacao</h1>
+         </div>
+         <div class="my-5 text-center">
+            <button class="btn btn-warning" onclick="modoAdicao(true)">Adicionar faces</button>
+            <button class="btn btn-danger" onclick="modoExlusao(true)">Excluir faces</button>
+            <button class="btn btn-success" onclick="enviar()">Publicar</button>
+         </div>
+         <div class="row">
+            <div class="col-8">
+               <div class="mx-auto" id="imagem" onclick='criaFace(event)'></div>
+            </div>
+            <div class="col-4">
+               <div class="mb-2">
+                  <h3>Area de seleção</h3>
+                  <div class="row my-2">
+                     <label class="col-4 col-form-label">Largura</label>
+                     <div class="col-8">
+                        <input id="input_largura_selecao" class="form-control" type="number" onchange="atualizaLarguraSelecao.call(this)">
+                     </div>
+                  </div>
+                  <div class="row my-2">
+                     <label class="col-4 col-form-label">Altura</label>
+                     <div class="col-8">
+                        <input id="input_altura_selecao" class="form-control" type="number" onchange="atualizaAlturaSelecao.call(this)">
+                     </div>
+                  </div>
+               </div>
+               <div class="my-2">
+                  <p><b>Faces: <span id="qtd_faces">1</span></b></p>
+               </div>
+               <div>
+                  <table class="table table-bordered" id="tabela">
+                     <thead>
+                        <tr>
+                           <th>x</th>
+                           <th>y</th>
+                           <th>w</th>
+                           <th>h</th>
+                           <th>mostrar</th>
+                           <th>remover</th>
+                        </tr>
+                     </thead>
+                     <tbody id="tbody">
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+         <div>
+            <form action="/publicar_chamada" method="post">
+               <textarea name="coordenadas" id="textarea"></textarea>
+               <input id="input_submit" type="submit">
+            </form>
+         </div>
+         <div style="height: 200px"></div>
+      </div>
+      <script>
+         function enviar(){
+             var tr = document.getElementById('tbody').getElementsByTagName('tr');
+             var textarea = document.getElementById('textarea');
+             var vetor = [];
+             for(var i=0; i < tr.length; i++){
+                 var td = tr[i].getElementsByTagName('td');
+                 var dicionario = {};
+                 dicionario['x'] = td[0].innerHTML;
+                 dicionario['y'] = td[1].innerHTML;
+                 dicionario['w'] = td[2].innerHTML;
+                 dicionario['h'] = td[3].innerHTML;
+                 vetor.push(dicionario);
+             }
+             textarea.value = JSON.stringify(vetor);
+             document.getElementById('input_submit').click();
+         }
+         
+         function atualizaQtdFaces(){
+             var tr = document.getElementById('tbody').getElementsByTagName('tr');
+             var qtd_faces = document.getElementById('qtd_faces').innerHTML = tr.length;
+         }
+         
+         function criaFace(event){
+             if (adicao){
+                 var posicoes = posicaoElemento('imagem');
+                 var largura_imagem  = document.getElementById('imagem').style.width;
+                 var altura_imagem  = document.getElementById('imagem').style.height;
+                 var x_absoluto = event.clientX;
+                 var y_absoluto = event.clientY;
+                 var centro_x_relativo = x_absoluto - posicoes['x'];
+                 var centro_y_relativo = y_absoluto - posicoes['y'];
+                 var canto_superior_esquerdo_x = centro_x_relativo - Math.floor(largura/2);
+                 var canto_superior_esquerdo_y = centro_y_relativo - Math.floor(altura/2);
+                 var id = Math.random();
+                 criaQuadrado(largura, altura, canto_superior_esquerdo_x, canto_superior_esquerdo_y, id);
+                 criaLinhaTabela(canto_superior_esquerdo_x, canto_superior_esquerdo_y, largura, altura, id);
+                 atualizaQtdFaces();
+             }
+         }
+         
+         function criaQuadrado(largura, altura, x, y, id){
+              var div = document.createElement('div');
+              div_img = document.getElementById('imagem');
+              div_img.appendChild(div);
+              div.style.border = "1px solid red";
+              div.style.height = altura + 'px';
+              div.style.width = largura + 'px';
+              div.style.position = "absolute";
+              div.style.marginLeft = x + 'px';
+              div.style.marginTop = y + 'px';
+              div.setAttribute('id', id);
+              div.setAttribute('onmouseover', 'mudaBackgroundDiv.call(this, true)');
+              div.setAttribute('onmouseout', 'mudaBackgroundDiv.call(this, false)');
+              div.setAttribute('onclick', 'excluiFace.call(this)');
+         }
+         
+         function posicaoElemento(id){
+             elemento = document.getElementById(id);
+             var x_absoluto = elemento.getBoundingClientRect().left;
+             var y_absoluto = elemento.getBoundingClientRect().top;
+             return {'x':  x_absoluto, 'y': y_absoluto};
+         }
+         
+         function atualizaLarguraSelecao(){
+             var value = this.value;
+             largura = value;
+         }
+         
+         function atualizaAlturaSelecao(){
+             var value = this.value;
+             altura = value;
+         }
+         
+         function mudaBackgroundDiv(booleano){
+             var elemento = this;
+             if (booleano){
+                 elemento.style.backgroundColor = "rgba(255,0,0,0.3)";
+             }
+             else{
+                 elemento.style.backgroundColor = "rgba(255,255,255,0)";
+             }
+         }
+         
+         function criaLinhaTabela(x, y, w, h, id){
+             var elementos = [x, y, w, h];
+             var tbody = document.getElementById('tbody');
+             var linha = document.createElement('tr');
+             linha.setAttribute('id', id);
+             for(var i=0; i < elementos.length; i++){
+                 var td  = document.createElement('td');
+                 td.innerHTML = elementos[i];
+                 linha.appendChild(td);
+             }
+             var td  = document.createElement('td');
+             var botao_mostrar = criaCheckBox();
+             td.appendChild(botao_mostrar);
+             linha.appendChild(td);
+             var td  = document.createElement('td');
+             var botao_remover = criaBotaoRemover();
+             td.appendChild(botao_remover);
+             linha.appendChild(td);
+             tbody.appendChild(linha);
+         }
+         
+         function criaCheckBox(){
+             var botao = document.createElement('input');
+             botao.setAttribute('type', 'checkbox');
+             botao.setAttribute('onchange', 'mostraDiv.call(this)');
+             botao.setAttribute('class', 'ml-3');
+             botao.checked = true;
+             return botao;
+         }
+         
+         function criaBotaoRemover(){
+             var botao = document.createElement('button');
+             botao.setAttribute('type', 'button');
+             botao.setAttribute('class', 'btn btn-danger');
+             botao.setAttribute('onclick', 'excluiFace.call(this.parentNode.parentNode)')
+             botao.innerHTML = 'remover';
+             botao.setAttribute('disabled', 'disabled');
+             botao.setAttribute('onmouseover', 'on_mouse_over_button.call(this.parentNode.parentNode)');
+             botao.setAttribute('onmouseout', 'on_mouse_out_button.call(this.parentNode.parentNode)');
+             return botao;
+         }
+         
+         function on_mouse_over_button(){
+             var id = this.getAttribute('id');
+             var div = document.getElementById(id);
+             div.onmouseover();
+         }
+         
+         function on_mouse_out_button(){
+             var id = this.getAttribute('id');
+             var div = document.getElementById(id);
+             div.onmouseout();
+         }
+         
+         function mostraDiv(){
+             var id = this.parentNode.parentNode.getAttribute('id');
+             var div = document.getElementsByTagName('div');
+             for(var i=0; i < div.length; i++){
+                 if(div[i].getAttribute('id') && div[i].getAttribute('id') == id){
+                     if(div[i].style.display == 'none'){
+                         div[i].style.display = 'block'
+                     }
+                     else{
+                         div[i].style.display = 'none';    
+                     }
+                 }        
+             }
+         }
+         
+         function modoAdicao(booleano){
+             adicao = booleano;
+             excluir = !booleano;
+             if (adicao){
+                 var titulo = document.getElementById('modo');
+                 titulo.innerHTML = "Modo de edição";
+                 titulo.className = "display-4 text-center text-warning";
+                 var botoes = document.getElementById('tabela').getElementsByTagName('button');
+                 habilitaBotao(botoes, false);
+             }
+         }
+         
+         function modoExlusao(booleano){
+             adicao = !booleano;
+             excluir = booleano;
+             if (excluir){
+                 var titulo = document.getElementById('modo');
+                 titulo.innerHTML = "Modo de exclusão de faces";
+                 titulo.className = "display-4 text-center text-danger";
+                 var botoes = document.getElementById('tabela').getElementsByTagName('button');
+                 habilitaBotao(botoes, true);
+             }
+         }
+         
+         function excluiFace(){
+             if (excluir){
+                 var elemento = this;
+                 var id =  elemento.getAttribute('id');
+                 this.remove();
+                 var linha = document.getElementById(id);
+                 if (linha){
+                     linha.remove();
+                     atualizaQtdFaces();
+                 }
+             }
+         }
+         
+         function habilitaBotao(array_botoes, booleano){
+            for(var i=0; i < array_botoes.length; i++){
+                if(booleano){
+                     var elemento = array_botoes[i].removeAttribute('disabled');  
+                }
+                else{
+                    var elemento = array_botoes[i].setAttribute('disabled', 'disabled');
+                }
+            }   
+         }
+         
+         var largura = 165;
+         var altura = 165;
+         var id_id = Math.random();
+         
+         window.onload = function(){
+             var input_largura_selecao = document.getElementById('input_largura_selecao');
+             var input_altura_selecao = document.getElementById('input_altura_selecao');
+             input_largura_selecao.value =  largura;
+             input_altura_selecao.value = altura;
+         }
+         
+         criaQuadrado(165, 165, 209, 84, id_id);
+         criaLinhaTabela(209, 84, 165, 165, id_id);
+         
+         var adicao = false;
+         var excluir = false;
+         
+      </script>
+   </body>
+</html>
