@@ -35,9 +35,14 @@ def renomeiaArquivoId(id_chamada, nome_arquivo):
     mycursor.execute(query, chamada)
     mydb.commit()
 
-
-
-
+def listaChamadasPendentes(id_usuario):
+    query = "SELECT tbt.nome_turma, tbc.id_chamada, tbc.data_chamada FROM tb_chamadas as tbc INNER JOIN tb_turmas as tbt ON tbc.id_turma = tbt.id_turma WHERE tbc.id_usuario = %s AND tbc.id_status = 0"
+    chamada = (id_usuario,)
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, chamada)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
 
 
 

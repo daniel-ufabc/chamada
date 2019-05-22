@@ -2,7 +2,7 @@ from autentica_usuario import autenticaUsuario
 from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal, nomeArquivo
 from banco_tb_usuarios import buscaUsuario
 from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma
-from banco_tb_chamadas import buscaChamada, cadastraNovaChamada
+from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes
 from banco_turma_horarios import buscaHorarioTurma
 from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto
 from banco_tb_coordenadas import detectaFaces
@@ -20,8 +20,9 @@ def testeUI():
 def painel_professor():
     if 'autenticado' in session and session['autenticado']:
         turmas = listaTurmas(session['id_usuario'])
+        chamadas_pendentes = listaChamadasPendentes(session['id_usuario'])
         print(turmas)
-        return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal)
+        return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes)
     else:
         return redirect('/login')
 

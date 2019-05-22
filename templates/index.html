@@ -179,32 +179,23 @@
 						<tr>
 							<th>Turma</th>
 							<th>Data</th>
-							<th>Horario</th>
-							<th>Campus</th>
 							<th></th>
 							<th></th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
+					{% for chamada in chamadas_pendentes %}
 						<tr>
-							<td>Funções de uma variavel</td>
-							<td>01/01/2019</td>
-							<td>8 as 10</td>
-							<td>Santo André</td>
-							<td><i class="fas fa-globe-americas"></i></td>
-							<td><i class="fas fa-trash"></i></td>
-							<td><i class="fas fa-pencil-alt"></i></td>
+							<form action="/chamada" method="post">
+								<td>{{ chamada['nome_turma'] }}</td>
+								<td>{{ chamada['data_chamada'] }}</td>
+								<td><i class="fas fa-trash"></i></td>
+								<td><i class="fas fa-pencil-alt"></i></td>
+								<input hidden="hidden" type="text" name="id_chamada" value="{{ chamada['id_chamada'] }}">
+							</form>
 						</tr>
-						<tr>
-							<td>Cálculo vetorial e tensorial</td>
-							<td>03/05/2019</td>
-							<td>19 as 21</td>
-							<td>São Bernardo</td>
-							<td><i class="fas fa-globe-americas"></i></td>
-							<td><i class="fas fa-trash"></i></td>
-							<td><i class="fas fa-pencil-alt"></i></td>
-						</tr>
+					{% endfor %}
 					</tbody>
 				</table>
 			</div>
