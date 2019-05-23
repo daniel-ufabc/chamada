@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 	<meta charset="utf-8">
@@ -131,38 +131,39 @@
 		<div class="modal fade" id="formNovaTurma" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Nova turma</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<form class="mx-5">
-							<div class="form-group row">
-								<label for="nome_turma" class="col-2">Turma: </label>
-								<input id="nome_turma" class="form-control col-10" type="text" name="nome_turma" placeholder="Digite o nome da turma">
-							</div>
-							<div class="form-group">
-								<div class="row">
-									<legend class="col-form-label col-2 pt-0">Campus</legend>
-									<div class="col-10">
-										<div class="form-check">
-											<input class="form-check-input" id="campus_sa" type="radio" name="campus" value="Santo André">
-											<label class="form-check-label" for="campus_sa">Santo André</label>
-										</div>
-										<div class="form-check">
-											<input class="form-check-input" id="campus_sbc" type="radio" name="campus" value="São Bernardo">
-											<label class="form-check-label" for="campus_sbc">São Bernardo</label>
+					<form class="mx-5">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Nova turma</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+								<div class="form-group row">
+									<label for="nome_turma" class="col-2">Turma: </label>
+									<input id="nome_turma" class="form-control col-10" type="text" name="nome_turma" placeholder="Digite o nome da turma">
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<legend class="col-form-label col-2 pt-0">Campus</legend>
+										<div class="col-10">
+											<div class="form-check">
+												<input class="form-check-input" id="campus_sa" type="radio" name="campus" value="Santo André">
+												<label class="form-check-label" for="campus_sa">Santo André</label>
+											</div>
+											<div class="form-check">
+												<input class="form-check-input" id="campus_sbc" type="radio" name="campus" value="São Bernardo">
+												<label class="form-check-label" for="campus_sbc">São Bernardo</label>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-						<button type="submit" class="btn btn-primary">Cadastrar</button>
-					</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+							<button type="submit" class="btn btn-primary">Cadastrar</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -191,8 +192,8 @@
 								<td>{{ chamada['nome_turma'] }}</td>
 								<td>{{ chamada['data_chamada'] }}</td>
 								<td><i class="fas fa-trash"></i></td>
-								<td><i class="fas fa-pencil-alt"></i></td>
 								<input hidden="hidden" type="text" name="id_chamada" value="{{ chamada['id_chamada'] }}">
+								<td><button class="btn btn-transparent" type="submit"><i class="fas fa-pencil-alt"></i></button></td>
 							</form>
 						</tr>
 					{% endfor %}

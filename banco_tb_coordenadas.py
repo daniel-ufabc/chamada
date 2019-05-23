@@ -1,5 +1,6 @@
 from conecta import conecta
 from openCV import detectorDeFaces
+from funcoes_auxiliares import dicionario
 
 def cadastraCoordenada(x, y, w, h, id_usuario, id_foto):
     coordenada = (x, y, w, h, id_usuario, id_foto)
@@ -18,3 +19,13 @@ def detectaFaces(nome_arquivo, id_usuario, id_foto):
         w = int(w)
         h = int(h)
         cadastraCoordenada(x, y, w, h, id_usuario, id_foto)
+
+def buscaFacesIdFoto(id_foto):
+    coordenada = (id_foto,)
+    query = "SELECT * FROM tb_coordenadas WHERE id_foto=%s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, coordenada)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
+

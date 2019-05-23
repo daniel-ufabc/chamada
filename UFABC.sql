@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 20, 2019 at 09:12 PM
+-- Generation Time: May 23, 2019 at 09:29 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.4
 
@@ -32,17 +32,16 @@ CREATE TABLE `tb_chamadas` (
   `id_chamada` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
   `data_chamada` date NOT NULL,
-  `id_turma` int(11) NOT NULL
+  `id_turma` int(11) NOT NULL,
+  `id_status` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `tb_chamadas`
 --
 
-INSERT INTO `tb_chamadas` (`id_chamada`, `id_usuario`, `data_chamada`, `id_turma`) VALUES
-(41, 1, '2020-06-20', 7),
-(42, 1, '2019-06-21', 7),
-(43, 1, '2020-06-21', 7);
+INSERT INTO `tb_chamadas` (`id_chamada`, `id_usuario`, `data_chamada`, `id_turma`, `id_status`) VALUES
+(48, 1, '2019-06-24', 7, 0);
 
 -- --------------------------------------------------------
 
@@ -65,8 +64,18 @@ CREATE TABLE `tb_coordenadas` (
 --
 
 INSERT INTO `tb_coordenadas` (`id_coordenada`, `x`, `y`, `w`, `h`, `id_usuario`, `id_foto`) VALUES
-(5, 209, 84, 165, 165, 1, 8),
-(6, 209, 84, 165, 165, 1, 9);
+(33, 646, 34, 51, 51, 1, 14),
+(34, 362, 45, 54, 54, 1, 14),
+(35, 225, 43, 56, 56, 1, 14),
+(36, 799, 40, 58, 58, 1, 14),
+(37, 493, 48, 56, 56, 1, 14),
+(38, 707, 156, 56, 56, 1, 14),
+(39, 438, 170, 53, 53, 1, 14),
+(40, 587, 167, 53, 53, 1, 14),
+(41, 311, 162, 51, 51, 1, 14),
+(42, 826, 162, 54, 54, 1, 14),
+(43, 202, 202, 56, 56, 1, 14),
+(44, 407, 443, 56, 56, 1, 14);
 
 -- --------------------------------------------------------
 
@@ -110,17 +119,16 @@ CREATE TABLE `tb_fotos` (
   `id_usuario` int(11) NOT NULL,
   `largura` int(11) NOT NULL,
   `altura` int(11) NOT NULL,
-  `nome_arquivo` varchar(255) DEFAULT NULL
+  `nome_arquivo` varchar(255) DEFAULT NULL,
+  `id_chamada` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `tb_fotos`
 --
 
-INSERT INTO `tb_fotos` (`id_foto`, `id_usuario`, `largura`, `altura`, `nome_arquivo`) VALUES
-(7, 1, 640, 480, '41.jpg'),
-(8, 1, 640, 480, '42.jpg'),
-(9, 1, 640, 480, '43.jpg');
+INSERT INTO `tb_fotos` (`id_foto`, `id_usuario`, `largura`, `altura`, `nome_arquivo`, `id_chamada`) VALUES
+(14, 1, 990, 557, '48.jpg', 48);
 
 -- --------------------------------------------------------
 
@@ -254,7 +262,8 @@ ALTER TABLE `tb_dia_semanal`
 --
 ALTER TABLE `tb_fotos`
   ADD PRIMARY KEY (`id_foto`),
-  ADD KEY `id_usuario` (`id_usuario`);
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_chamada` (`id_chamada`);
 
 --
 -- Indexes for table `tb_status_turma`
@@ -290,19 +299,19 @@ ALTER TABLE `tb_usuarios`
 -- AUTO_INCREMENT for table `tb_chamadas`
 --
 ALTER TABLE `tb_chamadas`
-  MODIFY `id_chamada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id_chamada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `tb_coordenadas`
 --
 ALTER TABLE `tb_coordenadas`
-  MODIFY `id_coordenada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_coordenada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `tb_fotos`
 --
 ALTER TABLE `tb_fotos`
-  MODIFY `id_foto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_foto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tb_turmas`
@@ -338,7 +347,8 @@ ALTER TABLE `tb_coordenadas`
 -- Constraints for table `tb_fotos`
 --
 ALTER TABLE `tb_fotos`
-  ADD CONSTRAINT `tb_fotos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `tb_usuarios` (`id_usuario`);
+  ADD CONSTRAINT `tb_fotos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `tb_usuarios` (`id_usuario`),
+  ADD CONSTRAINT `tb_fotos_ibfk_2` FOREIGN KEY (`id_chamada`) REFERENCES `tb_chamadas` (`id_chamada`);
 
 --
 -- Constraints for table `tb_turmas`

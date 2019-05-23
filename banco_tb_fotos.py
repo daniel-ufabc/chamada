@@ -1,9 +1,9 @@
 from conecta import conecta
 from funcoes_auxiliares import dicionario
 
-def cadastraNovafoto(nome_arquivo, id_usuario):
-    foto = (nome_arquivo, id_usuario)
-    query = "INSERT INTO tb_fotos(nome_arquivo, id_usuario) values (%s, %s)"
+def cadastraNovafoto(nome_arquivo, id_usuario, id_chamada):
+    foto = (nome_arquivo, id_usuario, id_chamada)
+    query = "INSERT INTO tb_fotos(nome_arquivo, id_usuario, id_chamada) values (%s, %s, %s)"
     mydb = conecta()
     mycursor = mydb.cursor()
     mycursor.execute(query, foto)
@@ -25,4 +25,15 @@ def buscaFoto(nome_arquivo):
     mycursor.execute(query, foto)
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
+
+def buscaFotoIdChamada(id_chamada):
+    foto = (id_chamada,)
+    query = "SELECT * FROM tb_fotos WHERE id_chamada=%s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, foto)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
+
+
 

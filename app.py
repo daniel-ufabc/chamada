@@ -4,9 +4,9 @@ from banco_tb_usuarios import buscaUsuario
 from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma
 from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes
 from banco_turma_horarios import buscaHorarioTurma
-from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto
-from banco_tb_coordenadas import detectaFaces
-from flask import Flask, render_template, request, redirect, session, flash
+from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaFotoIdChamada
+from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto
+from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from openCV import dimensoesImagem
 
 app = Flask(__name__)
@@ -79,7 +79,7 @@ def criarChamada():
     info_chamada = buscaChamada(id_usuario, id_turma, data_chamada)[0]
     nome_arquivo = nomeArquivo(info_chamada['id_chamada'], request.form['nome_arquivo'])
     arquivo = request.files['foto_upload']
-    cadastraNovafoto(nome_arquivo, id_usuario)
+    cadastraNovafoto(nome_arquivo, id_usuario, info_chamada['id_chamada'])
     arquivo.save('uploads/{}'.format(nome_arquivo))
     dimensoes = dimensoesImagem(nome_arquivo)
     atualizaDimensao(dimensoes['largura'], dimensoes['altura'], nome_arquivo)
@@ -87,6 +87,18 @@ def criarChamada():
     detectaFaces(nome_arquivo, id_usuario, info_foto['id_foto'])
     return redirect('/')
 
+@app.route('/chamada', methods=['POST'])
+def confirmaChamada():
+    id_chamada = request.form['id_chamada']
+    info_foto = buscaFotoIdChamada(id_chamada)[0]
+    nome_arquivo = info_foto['nome_arquivo']
+    dimensoes = {'altura': info_foto['altura'], 'largura': info_foto['largura']}
+    coordenadas_faces = buscaFacesIdFoto(info_foto['id_foto'])
+    return render_template('chamada.html', nome_arquivo=nome_arquivo, dimensoes=dimensoes, faces=coordenadas_faces)
 
+
+@app.route('/uploads/<nome_arquivo>')
+def imagem(nome_arquivo):
+    return send_from_directory('uploads', nome_arquivo)
 
 app.run()

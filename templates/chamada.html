@@ -10,9 +10,9 @@
       <title>Sistema de contagem de faltas</title>
       <style type="text/css">
          #imagem{
-         background-image: url('../uploads/43.jpg'); 
-         width: 640px; 
-         height: 480px; 
+         background-image: url({{ url_for('imagem', nome_arquivo=nome_arquivo) }});
+         width: {{dimensoes['largura']}}px;
+         height: {{dimensoes['altura']}}px;
          border: 1px solid red;
          }		
       </style>
@@ -289,7 +289,7 @@
          
          var largura = 165;
          var altura = 165;
-         var id_id = Math.random();
+
          
          window.onload = function(){
              var input_largura_selecao = document.getElementById('input_largura_selecao');
@@ -297,9 +297,17 @@
              input_largura_selecao.value =  largura;
              input_altura_selecao.value = altura;
          }
-         
-         criaQuadrado(165, 165, 209, 84, id_id);
-         criaLinhaTabela(209, 84, 165, 165, id_id);
+
+         {% for face in faces %}
+            {% set largura = face['w'] %}
+            {% set altura = face['h'] %}
+            {% set x = face['x'] %}
+            {% set y = face['y'] %}
+            var id_id = Math.random();
+            criaQuadrado({{ largura }}, {{ altura }}, {{ x }}, {{ y }}, id_id);
+            criaLinhaTabela({{ x }}, {{ y }}, {{ largura }}, {{ altura }}, id_id);
+
+         {% endfor %}
          
          var adicao = false;
          var excluir = false;
