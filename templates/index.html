@@ -188,13 +188,21 @@
 					<tbody>
 					{% for chamada in chamadas_pendentes %}
 						<tr>
-							<form action="/chamada" method="post">
-								<td>{{ chamada['nome_turma'] }}</td>
-								<td>{{ chamada['data_chamada'] }}</td>
-								<td><i class="fas fa-trash"></i></td>
-								<input hidden="hidden" type="text" name="id_chamada" value="{{ chamada['id_chamada'] }}">
-								<td><button class="btn btn-transparent" type="submit"><i class="fas fa-pencil-alt"></i></button></td>
-							</form>
+
+							<td>{{ chamada['nome_turma'] }}</td>
+							<td>{{ chamada['data_chamada'] }}</td>
+							<td>
+								<form action="/excluir_chamada" method="post">
+									<input hidden="hidden" type="text" name="id_chamada" value="{{ chamada['id_chamada'] }}">
+									<button class="btn btn-transparent" type="submit"><i class="fas fa-trash"></i></button>
+								</form>
+							</td>
+							<td>
+								<form action="/chamada" method="post">
+									<input hidden="hidden" type="text" name="id_chamada" value="{{ chamada['id_chamada'] }}">
+									<button class="btn btn-transparent" type="submit"><i class="fas fa-pencil-alt"></i></button>
+								</form>
+							</td>
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -219,17 +227,22 @@
 						</tr>
 					</thead>
 					<tbody>
+					{% for chamada in chamadas_ativas %}
+						{% set id_foto = buscaFotoIdChamada(chamada['id_chamada'])[0]['id_foto'] %}
+						{% set total =  len(buscaFacesIdFoto(id_foto)) %}
+						{% set ativas = len(buscaCoordenadaAtiva(id_foto)) %}
 						<tr>
-							<td>Funções de uma variavel</td>
-							<td>01/01/2019</td>
-							<td>55/85</td>
+							<td>{{ chamada['nome_turma'] }}</td>
+							<td>{{ chamada['data_chamada'] }}</td>
+							<td>{{ ativas }}/{{ total }}</td>
 							<td>
-								<form action="" method="post">
-									<input type="hidden" name="id_turma" value="">
-									<button class="btn btn-outline-info">Detalhes</button>
+								<form action="/detalhes_chamada" method="post">
+									<input type="hidden" name="id_chamada" value="{{ chamada['id_chamada'] }}">
+									<button class="btn btn-outline-info" type="submit">Detalhes</button>
 								</form>
 							</td>
 						</tr>
+					{% endfor %}
 					</tbody>
 				</table>
 			</div>

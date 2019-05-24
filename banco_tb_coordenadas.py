@@ -36,3 +36,13 @@ def deletaCoordendasIdFoto(id_foto):
     mycursor = mydb.cursor()
     mycursor.execute(query, coordenada)
     mydb.commit()
+
+def buscaCoordenadaAtiva(id_foto):
+    coordenada = (id_foto,)
+    query = "SELECT * FROM tb_coordenadas WHERE id_foto=%s AND id_status=1"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, coordenada)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
+

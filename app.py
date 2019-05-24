@@ -2,10 +2,10 @@ from autentica_usuario import autenticaUsuario
 from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal, nomeArquivo
 from banco_tb_usuarios import buscaUsuario
 from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma
-from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes, publicaChamadaIdChamada
+from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes, publicaChamadaIdChamada, excluiChamadaIdChamada, listaChamadasAtivas
 from banco_turma_horarios import buscaHorarioTurma
 from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaFotoIdChamada
-from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto
+from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto, buscaCoordenadaAtiva
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from openCV import dimensoesImagem
 import json
@@ -22,15 +22,14 @@ def painel_professor():
     if 'autenticado' in session and session['autenticado']:
         turmas = listaTurmas(session['id_usuario'])
         chamadas_pendentes = listaChamadasPendentes(session['id_usuario'])
-        return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes)
+        chamadas_ativas = listaChamadasAtivas(session['id_usuario'])
+        return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas, buscaFacesIdFoto=buscaFacesIdFoto, buscaCoordenadaAtiva=buscaCoordenadaAtiva, buscaFotoIdChamada=buscaFotoIdChamada, len=len)
     else:
         return redirect('/login')
-
 
 @app.route('/login')
 def login():
     return render_template('login.html')
-
 
 @app.route('/autentica', methods=['POST'])
 def autenticaLogin():
@@ -45,7 +44,6 @@ def autenticaLogin():
         session['autenticado'] = False
         flash('Usuario ou senha invalido(s)')
         return redirect('/login')
-
 
 @app.route('/logout')
 def encerraSessao():
@@ -105,6 +103,12 @@ def publicaChamada():
     for c in coordenadas:
         cadastraCoordenada(c['x'], c['y'], c['w'], c['h'], session['id_usuario'], id_foto)
     publicaChamadaIdChamada(id_chamada)
+    return redirect('/')
+
+@app.route('/excluir_chamada', methods=['POST'])
+def excluirChamada():
+    id_chamada = request.form['id_chamada']
+    excluiChamadaIdChamada(id_chamada)
     return redirect('/')
 
 @app.route('/uploads/<nome_arquivo>')

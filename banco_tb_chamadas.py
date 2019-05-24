@@ -1,5 +1,7 @@
 from conecta import conecta
 from funcoes_auxiliares import dicionario
+from banco_tb_coordenadas import deletaCoordendasIdFoto
+from banco_tb_fotos import buscaFotoIdChamada, deletaFotoIdFoto
 
 
 def cadastraNovaChamada(id_usuario, id_turma, data_chamada):
@@ -46,9 +48,30 @@ def listaChamadasPendentes(id_usuario):
 
 def publicaChamadaIdChamada(id_chamada):
     chamada = (id_chamada,)
-    query =  "UPDATE tb_chamadas set id_status=1 WHERE id_chamada=%s"
+    query = "UPDATE tb_chamadas set id_status=1 WHERE id_chamada=%s"
     mydb = conecta()
     mycursor = mydb.cursor()
     mycursor.execute(query, chamada)
     mydb.commit()
 
+def excluiChamadaIdChamada(id_chamada):
+    chamada = (id_chamada,)
+    info_foto = buscaFotoIdChamada(id_chamada)[0]
+    deletaCoordendasIdFoto(info_foto['id_foto'])
+    deletaFotoIdFoto(info_foto['id_foto'])
+    query = "DELETE FROM tb_chamadas WHERE id_chamada=%s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, chamada)
+    mydb.commit()
+
+def listaChamadasAtivas(id_usuario):
+    query = "SELECT tbt.nome_turma, tbc.id_chamada, tbc.data_chamada FROM tb_chamadas as tbc INNER JOIN tb_turmas as tbt ON tbc.id_turma = tbt.id_turma WHERE tbc.id_usuario = %s AND tbc.id_status = 1"
+    chamada = (id_usuario,)
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, chamada)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
+
+print(listaChamadasAtivas(1))
