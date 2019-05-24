@@ -29,3 +29,10 @@ def buscaFacesIdFoto(id_foto):
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
 
+def deletaCoordendasIdFoto(id_foto):
+    coordenada = (id_foto,)
+    query = "DELETE FROM tb_coordenadas WHERE id_foto=%s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, coordenada)
+    mydb.commit()

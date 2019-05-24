@@ -11,10 +11,10 @@
       <style type="text/css">
          #imagem{
          background-image: url({{ url_for('imagem', nome_arquivo=nome_arquivo) }});
-         width: {{dimensoes['largura']}}px;
-         height: {{dimensoes['altura']}}px;
+         background-size: cover;
+         width: 100%;
          border: 1px solid red;
-         }		
+         }
       </style>
    </head>
    <body>
@@ -78,8 +78,10 @@
                </div>
             </div>
          </div>
-         <div>
+         <div class="d-none">
             <form action="/publicar_chamada" method="post">
+               <input type="text" name="id_foto" value="{{ info_foto['id_foto'] }}">
+               <input type="text" name="id_chamada" value="{{ info_foto['id_chamada'] }}">
                <textarea name="coordenadas" id="textarea"></textarea>
                <input id="input_submit" type="submit">
             </form>
@@ -103,30 +105,35 @@
              textarea.value = JSON.stringify(vetor);
              document.getElementById('input_submit').click();
          }
-         
+
          function atualizaQtdFaces(){
              var tr = document.getElementById('tbody').getElementsByTagName('tr');
              var qtd_faces = document.getElementById('qtd_faces').innerHTML = tr.length;
          }
-         
+
          function criaFace(event){
              if (adicao){
-                 var posicoes = posicaoElemento('imagem');
-                 var largura_imagem  = document.getElementById('imagem').style.width;
-                 var altura_imagem  = document.getElementById('imagem').style.height;
-                 var x_absoluto = event.clientX;
-                 var y_absoluto = event.clientY;
-                 var centro_x_relativo = x_absoluto - posicoes['x'];
-                 var centro_y_relativo = y_absoluto - posicoes['y'];
-                 var canto_superior_esquerdo_x = centro_x_relativo - Math.floor(largura/2);
-                 var canto_superior_esquerdo_y = centro_y_relativo - Math.floor(altura/2);
-                 var id = Math.random();
+                 let posicoes = posicaoElemento('imagem');
+                 let largura_imagem  = document.getElementById('imagem').offsetWidth;
+                 let altura_imagem  = document.getElementById('imagem').offsetHeight;
+                 let x_absoluto = event.clientX;
+                 let y_absoluto = event.clientY;
+                 let centro_x_relativo = x_absoluto - posicoes['x'];
+                 let centro_y_relativo = y_absoluto - posicoes['y'];
+                 let canto_superior_esquerdo_x = centro_x_relativo - Math.floor(largura/2);
+                 let canto_superior_esquerdo_y = centro_y_relativo - Math.floor(altura/2);
+                 let razao = (largura_imagem_original/largura_imagem);
+                 let n_canto_superior_esquerdo_y = Math.floor(canto_superior_esquerdo_y * razao);
+                 let n_canto_superior_esquerdo_x = Math.floor(canto_superior_esquerdo_x * razao);
+                 let n_largura = Math.floor(largura * razao);
+                 let n_altura = Math.floor(altura * razao);
+                 let id = Math.random();
                  criaQuadrado(largura, altura, canto_superior_esquerdo_x, canto_superior_esquerdo_y, id);
-                 criaLinhaTabela(canto_superior_esquerdo_x, canto_superior_esquerdo_y, largura, altura, id);
+                 criaLinhaTabela(n_canto_superior_esquerdo_x, n_canto_superior_esquerdo_y, n_largura, n_altura, id);
                  atualizaQtdFaces();
              }
          }
-         
+
          function criaQuadrado(largura, altura, x, y, id){
               var div = document.createElement('div');
               div_img = document.getElementById('imagem');
@@ -142,24 +149,34 @@
               div.setAttribute('onmouseout', 'mudaBackgroundDiv.call(this, false)');
               div.setAttribute('onclick', 'excluiFace.call(this)');
          }
-         
+
+         function criaQuadradoFlask(largura, altura, x, y, id){
+            var largura_imagem  = document.getElementById('imagem').offsetWidth;
+            var razao = (largura_imagem/largura_imagem_original);
+            var n_largura = largura * razao;
+            var n_altura = altura * razao;
+            var n_x = x * razao;
+            var n_y = y * razao;
+            criaQuadrado(n_largura, n_altura, n_x, n_y, id);
+         }
+
          function posicaoElemento(id){
              elemento = document.getElementById(id);
              var x_absoluto = elemento.getBoundingClientRect().left;
              var y_absoluto = elemento.getBoundingClientRect().top;
              return {'x':  x_absoluto, 'y': y_absoluto};
          }
-         
+
          function atualizaLarguraSelecao(){
              var value = this.value;
              largura = value;
          }
-         
+
          function atualizaAlturaSelecao(){
              var value = this.value;
              altura = value;
          }
-         
+
          function mudaBackgroundDiv(booleano){
              var elemento = this;
              if (booleano){
@@ -169,7 +186,7 @@
                  elemento.style.backgroundColor = "rgba(255,255,255,0)";
              }
          }
-         
+
          function criaLinhaTabela(x, y, w, h, id){
              var elementos = [x, y, w, h];
              var tbody = document.getElementById('tbody');
@@ -190,7 +207,7 @@
              linha.appendChild(td);
              tbody.appendChild(linha);
          }
-         
+
          function criaCheckBox(){
              var botao = document.createElement('input');
              botao.setAttribute('type', 'checkbox');
@@ -199,7 +216,7 @@
              botao.checked = true;
              return botao;
          }
-         
+
          function criaBotaoRemover(){
              var botao = document.createElement('button');
              botao.setAttribute('type', 'button');
@@ -211,19 +228,19 @@
              botao.setAttribute('onmouseout', 'on_mouse_out_button.call(this.parentNode.parentNode)');
              return botao;
          }
-         
+
          function on_mouse_over_button(){
              var id = this.getAttribute('id');
              var div = document.getElementById(id);
              div.onmouseover();
          }
-         
+
          function on_mouse_out_button(){
              var id = this.getAttribute('id');
              var div = document.getElementById(id);
              div.onmouseout();
          }
-         
+
          function mostraDiv(){
              var id = this.parentNode.parentNode.getAttribute('id');
              var div = document.getElementsByTagName('div');
@@ -233,12 +250,12 @@
                          div[i].style.display = 'block'
                      }
                      else{
-                         div[i].style.display = 'none';    
+                         div[i].style.display = 'none';
                      }
-                 }        
+                 }
              }
          }
-         
+
          function modoAdicao(booleano){
              adicao = booleano;
              excluir = !booleano;
@@ -250,7 +267,7 @@
                  habilitaBotao(botoes, false);
              }
          }
-         
+
          function modoExlusao(booleano){
              adicao = !booleano;
              excluir = booleano;
@@ -262,7 +279,7 @@
                  habilitaBotao(botoes, true);
              }
          }
-         
+
          function excluiFace(){
              if (excluir){
                  var elemento = this;
@@ -275,27 +292,35 @@
                  }
              }
          }
-         
+
          function habilitaBotao(array_botoes, booleano){
             for(var i=0; i < array_botoes.length; i++){
                 if(booleano){
-                     var elemento = array_botoes[i].removeAttribute('disabled');  
+                     var elemento = array_botoes[i].removeAttribute('disabled');
                 }
                 else{
                     var elemento = array_botoes[i].setAttribute('disabled', 'disabled');
                 }
-            }   
+            }
          }
-         
-         var largura = 165;
-         var altura = 165;
 
-         
+
+         let largura_imagem_original = {{ info_foto['largura'] }};
+         let altura_imagem_original = {{ info_foto['altura'] }};
+
+         var largura = 100;
+         var altura = 100;
+
+
          window.onload = function(){
              var input_largura_selecao = document.getElementById('input_largura_selecao');
              var input_altura_selecao = document.getElementById('input_altura_selecao');
              input_largura_selecao.value =  largura;
              input_altura_selecao.value = altura;
+             var div = document.getElementById('imagem');
+             var div_w = div.offsetWidth;
+             let razao = div_w/largura_imagem_original;
+             document.getElementById('imagem').style.height = (razao * altura_imagem_original) + 'px';
          }
 
          {% for face in faces %}
@@ -304,10 +329,12 @@
             {% set x = face['x'] %}
             {% set y = face['y'] %}
             var id_id = Math.random();
-            criaQuadrado({{ largura }}, {{ altura }}, {{ x }}, {{ y }}, id_id);
+            criaQuadradoFlask({{ largura }}, {{ altura }}, {{ x }}, {{ y }}, id_id);
             criaLinhaTabela({{ x }}, {{ y }}, {{ largura }}, {{ altura }}, id_id);
-
          {% endfor %}
+
+
+
          
          var adicao = false;
          var excluir = false;

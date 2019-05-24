@@ -2,12 +2,13 @@ from autentica_usuario import autenticaUsuario
 from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal, nomeArquivo
 from banco_tb_usuarios import buscaUsuario
 from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma
-from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes
+from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes, publicaChamadaIdChamada
 from banco_turma_horarios import buscaHorarioTurma
 from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaFotoIdChamada
-from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto
+from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from openCV import dimensoesImagem
+import json
 
 app = Flask(__name__)
 app.secret_key = 'appufabc'
@@ -21,7 +22,6 @@ def painel_professor():
     if 'autenticado' in session and session['autenticado']:
         turmas = listaTurmas(session['id_usuario'])
         chamadas_pendentes = listaChamadasPendentes(session['id_usuario'])
-        print(turmas)
         return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes)
     else:
         return redirect('/login')
@@ -92,10 +92,20 @@ def confirmaChamada():
     id_chamada = request.form['id_chamada']
     info_foto = buscaFotoIdChamada(id_chamada)[0]
     nome_arquivo = info_foto['nome_arquivo']
-    dimensoes = {'altura': info_foto['altura'], 'largura': info_foto['largura']}
     coordenadas_faces = buscaFacesIdFoto(info_foto['id_foto'])
-    return render_template('chamada.html', nome_arquivo=nome_arquivo, dimensoes=dimensoes, faces=coordenadas_faces)
+    return render_template('chamada.html', nome_arquivo=nome_arquivo, faces=coordenadas_faces, info_foto=info_foto)
 
+@app.route('/publicar_chamada', methods=['POST'])
+def publicaChamada():
+    coordenadas = request.form['coordenadas']
+    id_foto = request.form['id_foto']
+    id_chamada = request.form['id_chamada']
+    coordenadas = json.loads(coordenadas)
+    deletaCoordendasIdFoto(id_foto)
+    for c in coordenadas:
+        cadastraCoordenada(c['x'], c['y'], c['w'], c['h'], session['id_usuario'], id_foto)
+    publicaChamadaIdChamada(id_chamada)
+    return redirect('/')
 
 @app.route('/uploads/<nome_arquivo>')
 def imagem(nome_arquivo):

@@ -44,5 +44,11 @@ def listaChamadasPendentes(id_usuario):
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
 
-
+def publicaChamadaIdChamada(id_chamada):
+    chamada = (id_chamada,)
+    query =  "UPDATE tb_chamadas set id_status=1 WHERE id_chamada=%s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, chamada)
+    mydb.commit()
 
