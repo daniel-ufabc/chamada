@@ -33,9 +33,8 @@
             <h1 class="display-4 text-center text-success" id="modo">Modo visualizacao</h1>
         </div>
         <div class="my-5 text-center">
-            <button class="btn btn-warning" onclick="modoAdicao(true)">Adicionar faces</button>
-            <button class="btn btn-danger" onclick="modoExlusao(true)">Excluir faces</button>
-            <button class="btn btn-success" onclick="enviar()">Publicar</button>
+            <button class="btn btn-warning" onclick="removerSelecao()">Remover seleção</button>
+            <button class="btn btn-success" id="botao_salvar" disabled="disabled" onclick="enviar()">Salvar, marcar presença</button>
         </div>
         <div class="row">
             <div class="col-12">
@@ -43,7 +42,12 @@
             </div>
         </div>
         <div style="height: 200px"></div>
-        <input type="text" name="id_coordenada" id="id_coordenada">
+            <div class="">
+                <form action="/marcar_chamada", method="post">
+                    <input type="text" name="id_coordenada" id="id_coordenada">
+                    <input type="submit" id="botao_submit">
+                </form>
+            </div> 
         </div>
     </div>
 </div>
@@ -93,6 +97,8 @@ function mudaBackgroundDiv(booleano, elemento_hmtl){
 }
 
 function marcaPresenca(){
+    let botao_salvar = document.getElementById('botao_salvar');
+    botao_salvar.removeAttribute('disabled');
     let elemento = this;
     let input_id_coordenada = document.getElementById('id_coordenada');
     let div = document.getElementById('imagem').getElementsByTagName('div');
@@ -106,6 +112,25 @@ function marcaPresenca(){
     input_id_coordenada.value = elemento.id;
     mudaBackgroundDiv(true, elemento);
 }
+
+function removerSelecao(){
+    let div = document.getElementById('imagem').getElementsByTagName('div');
+    let input_id_coordenada = document.getElementById('id_coordenada');
+    input_id_coordenada.value = "";
+    let botao_salvar = document.getElementById('botao_salvar');
+    botao_salvar.setAttribute('disabled', 'disabled');
+    for(let i=0; i < div.length; i++){
+        mudaBackgroundDiv(false, div[i]);
+        div[i].setAttribute('onmouseover', 'mudaBackgroundDiv.call(this, true)');
+        div[i].setAttribute('onmouseout', 'mudaBackgroundDiv.call(this, false)');
+    }
+}
+
+function enviar(){
+    let botao_submit = document.getElementById('botao_submit');
+    botao_submit.click();
+}
+
 
 
 
