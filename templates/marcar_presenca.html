@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <title>Sistema de contagem de faltas</title>
+    <style type="text/css">
+        #imagem{
+            background-image: url('../uploads/52.jpg');
+            background-size: cover;
+            width: 100%;
+            border: 1px solid red;
+        }
+</style>
+</head>
+<body>
+    <!-- Topo -->
+    <div class="container">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">
+                <img src="../static/css/ufabc-logo.svg" width="50" height="50" class="mr-2"><span>UFABC</span>
+            </a>
+            <a href="/logout" class="btn btn-outline-danger">Sair</a>
+        </nav>
+    </div>
+    <!-- Conteudo -->
+    <div class="container my-5">
+        <div>
+            <h1 class="display-4 text-center text-success" id="modo">Modo visualizacao</h1>
+        </div>
+        <div class="my-5 text-center">
+            <button class="btn btn-warning" onclick="modoAdicao(true)">Adicionar faces</button>
+            <button class="btn btn-danger" onclick="modoExlusao(true)">Excluir faces</button>
+            <button class="btn btn-success" onclick="enviar()">Publicar</button>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="mx-auto" id="imagem"></div>
+            </div>
+        </div>
+        <div style="height: 200px"></div>
+        <input type="text" name="id_coordenada" id="id_coordenada">
+        </div>
+    </div>
+</div>
+</div>
+<script>
+function criaQuadrado(largura, altura, x, y, id){
+    var div = document.createElement('div');
+    div_img = document.getElementById('imagem');
+    div_img.appendChild(div);
+    div.style.border = "1px solid red";
+    div.style.height = altura + 'px';
+    div.style.width = largura + 'px';
+    div.style.position = "absolute";
+    div.style.marginLeft = x + 'px';
+    div.style.marginTop = y + 'px';
+    div.setAttribute('id', id);
+    div.setAttribute('onmouseover', 'mudaBackgroundDiv.call(this, true)');
+    div.setAttribute('onmouseout', 'mudaBackgroundDiv.call(this, false)');
+    div.setAttribute('onclick', 'marcaPresenca.call(this)');
+}
+
+function criaQuadradoFlask(largura, altura, x, y, id){
+    var largura_imagem  = document.getElementById('imagem').offsetWidth;
+    var razao = (largura_imagem/largura_imagem_original);
+    var n_largura = largura * razao;
+    var n_altura = altura * razao;
+    var n_x = x * razao;
+    var n_y = y * razao;
+    criaQuadrado(n_largura, n_altura, n_x, n_y, id);
+}
+
+function posicaoElemento(id){
+    elemento = document.getElementById(id);
+    var x_absoluto = elemento.getBoundingClientRect().left;
+    var y_absoluto = elemento.getBoundingClientRect().top;
+    return {'x':  x_absoluto, 'y': y_absoluto};
+}
+
+function mudaBackgroundDiv(booleano, elemento_hmtl){
+    var elemento = elemento_hmtl? elemento_hmtl : this;
+    if (booleano){
+        elemento.style.backgroundColor = "rgba(255,0,0,0.3)";
+    }
+    else{
+        elemento.style.backgroundColor = "rgba(255,255,255,0)";
+    }
+}
+
+function marcaPresenca(){
+    let elemento = this;
+    let input_id_coordenada = document.getElementById('id_coordenada');
+    let div = document.getElementById('imagem').getElementsByTagName('div');
+    for(let i=0; i < div.length; i++){
+        mudaBackgroundDiv(false, div[i]);
+        div[i].setAttribute('onmouseover', 'mudaBackgroundDiv.call(this, true)');
+        div[i].setAttribute('onmouseout', 'mudaBackgroundDiv.call(this, false)');
+    }
+    elemento.removeAttribute('onmouseover');
+    elemento.removeAttribute('onmouseout');
+    input_id_coordenada.value = elemento.id;
+    mudaBackgroundDiv(true, elemento);
+}
+
+
+
+let largura_imagem_original = 640;
+let altura_imagem_original = 480;
+
+var clicou = false;
+
+var largura = 100;
+var altura = 100;
+
+
+window.onload = function(){
+    var input_largura_selecao = document.getElementById('input_largura_selecao');
+    var input_altura_selecao = document.getElementById('input_altura_selecao');
+    var div = document.getElementById('imagem');
+    var div_w = div.offsetWidth;
+    let razao = div_w/largura_imagem_original;
+    document.getElementById('imagem').style.height = (razao * altura_imagem_original) + 'px';
+}
+
+var id_id = Math.random();
+criaQuadradoFlask(165,165,209,84,id_id);
+
+var id_id = Math.random();
+criaQuadradoFlask(165,165,100,50,id_id);
+
+
+var adicao = false;
+var excluir = false;
+
+</script>
+</body>
+</html>
