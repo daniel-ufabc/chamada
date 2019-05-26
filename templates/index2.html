@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<title>Sistema de contagem de faltas</title>
+</head>
+<body>
+
+	<!-- Topo -->
+	<div class="container">
+		<nav class="navbar navbar-light bg-light">
+			<a class="navbar-brand" href="#">
+				<img src="../static/css/ufabc-logo.svg" width="50" height="50" class="mr-2"><span>UFABC</span>
+			</a>
+			<a href="/logout" class="btn btn-outline-danger">Sair</a>
+		</nav>
+	</div>
+
+	<!-- Conteudo -->
+	<div class="container my-5">
+
+		<!-- Gerador de relatorio -->
+		<div class="card text-center my-5">
+			<div class="card-body">
+				<h5 class="card-title">Relatórios</h5>
+				<p style="font-size: 50px;"><i class="fas fa-chart-bar"></i></p>
+				<p>Gere o relatório completo de sua frequência</p>
+				<button class="btn btn-primary" type="button">Gerar relatorio</button>
+			</div>
+		</div>
+
+
+		<!-- Foto upload / Formulario nova chamada -->
+		<div class="row">
+			<div class="col-12">
+				<div class="card h-100">
+					<div class="card-body">
+						<h5 class="card-title">Nova turma</h5>
+						<p class="card-title">
+							Cadastre uma nova turma e registre sua presença
+						</p>
+					</div>
+					<div class="card-footer bg-transparent">
+						<button class="btn btn-primary" type="button" data-toggle="modal" data-target="#formNovaTurma">
+							Cadastrar uma nova turma +
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Modal - Formulario Nova turma -->
+		<div class="modal fade" id="formNovaTurma" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<form class="mx-5">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Nova turma</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+								<div class="form-group row">
+									<label for="nome_turma" class="col-2">Turma: </label>
+									<input id="nome_turma" class="form-control col-10" type="text" name="nome_turma" placeholder="Digite o nome da turma">
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<legend class="col-form-label col-2 pt-0">Campus</legend>
+										<div class="col-10">
+											<div class="form-check">
+												<input class="form-check-input" id="campus_sa" type="radio" name="campus" value="Santo André">
+												<label class="form-check-label" for="campus_sa">Santo André</label>
+											</div>
+											<div class="form-check">
+												<input class="form-check-input" id="campus_sbc" type="radio" name="campus" value="São Bernardo">
+												<label class="form-check-label" for="campus_sbc">São Bernardo</label>
+											</div>
+										</div>
+									</div>
+								</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+							<button type="submit" class="btn btn-primary">Cadastrar</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Chamadas pendentes CARD -->
+		<div class="card border-warning my-5">
+			<div class="card-header bg-warning">
+				<h5 class="text-white">Chamadas pendentes</h5>				
+			</div>
+			<div class="card-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Turma</th>
+							<th>Data</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Funcoes de varias variveis</td>
+							<td>2019-05-01</td>
+							<td>
+								<form action="/excluir_chamada" method="post">
+									<input hidden="hidden" type="text" name="id_chamada" value="{{ chamada['id_chamada'] }}">
+									<button class="btn btn-transparent" type="submit"><i class="fas fa-user-check"></i></button>
+								</form>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+		<!-- Chamadas ativas CARD -->
+		<div class="card border-primary my-5">
+			<div class="card-header bg-primary">
+				<h5 class="text-white">Chamadas ativas</h5>	
+			</div>
+			<div class="card-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Turma</th>
+							<th>Data</th>
+							<th>Status</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Funcoes de varias variveis</td>
+							<td>2019-05-01</td>
+							<td>Presente</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+	</div>
+    
+    
+
+</body>
+</html>
