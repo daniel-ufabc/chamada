@@ -8,6 +8,7 @@ from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaF
 from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto, buscaCoordenadaAtiva
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from openCV import dimensoesImagem
+from banco_tb_turma_alunos import listaTurmasAluno, excluiTurmaAluno
 import json
 
 app = Flask(__name__)
@@ -20,10 +21,14 @@ def testeUI():
 @app.route('/')
 def painel_professor():
     if 'autenticado' in session and session['autenticado']:
-        turmas = listaTurmas(session['id_usuario'])
-        chamadas_pendentes = listaChamadasPendentes(session['id_usuario'])
-        chamadas_ativas = listaChamadasAtivas(session['id_usuario'])
-        return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas, buscaFacesIdFoto=buscaFacesIdFoto, buscaCoordenadaAtiva=buscaCoordenadaAtiva, buscaFotoIdChamada=buscaFotoIdChamada, len=len)
+        if session['id_permissao'] == 1:
+            turmas = listaTurmas(session['id_usuario'])
+            chamadas_pendentes = listaChamadasPendentes(session['id_usuario'])
+            chamadas_ativas = listaChamadasAtivas(session['id_usuario'])
+            return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas, buscaFacesIdFoto=buscaFacesIdFoto, buscaCoordenadaAtiva=buscaCoordenadaAtiva, buscaFotoIdChamada=buscaFotoIdChamada, len=len)
+        if session['id_permissao'] == 0:
+            turmas = listaTurmasAluno(session['id_usuario'])
+            return render_template('index2.html', lista_de_turmas=turmas, buscaTurma=buscaTurma)
     else:
         return redirect('/login')
 
@@ -109,6 +114,13 @@ def publicaChamada():
 def excluirChamada():
     id_chamada = request.form['id_chamada']
     excluiChamadaIdChamada(id_chamada)
+    return redirect('/')
+
+@app.route('/remover_turma_aluno', methods=['POST'])
+def removeTurmaAluno():
+    id_usuario = session['id_usuario']
+    id_turma = request.form['id_turma']
+    excluiTurmaAluno(id_usuario, id_turma)
     return redirect('/')
 
 @app.route('/uploads/<nome_arquivo>')
