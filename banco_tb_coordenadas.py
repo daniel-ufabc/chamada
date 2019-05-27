@@ -46,3 +46,21 @@ def buscaCoordenadaAtiva(id_foto):
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
 
+def buscaCoordenada(id_coordenada):
+    coordenada = (id_coordenada,)
+    query = "SELECT * FROM tb_coordenadas WHERE id_coordenada = %s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, coordenada)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
+
+def mudaStatusCoordenada(id_coordenada):
+    info_coordenada = buscaCoordenada(id_coordenada)[0]
+    novo_status = int(info_coordenada['id_status']) + 1
+    coordenada = (novo_status, id_coordenada)
+    query = "UPDATE tb_coordenadas SET id_status = %s WHERE id_coordenada = %s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, coordenada)
+    mydb.commit()

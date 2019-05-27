@@ -10,7 +10,7 @@
     <title>Sistema de contagem de faltas</title>
     <style type="text/css">
         #imagem{
-            background-image: url('../uploads/52.jpg');
+            background-image: url({{ url_for('imagem', nome_arquivo=nome_arquivo) }});
             background-size: cover;
             width: 100%;
             border: 1px solid red;
@@ -45,6 +45,7 @@
             <div class="">
                 <form action="/marcar_chamada", method="post">
                     <input type="text" name="id_coordenada" id="id_coordenada">
+                    <input type="text" name="id_chamada" value="{{ id_chamada }}">
                     <input type="submit" id="botao_submit">
                 </form>
             </div> 
@@ -134,8 +135,8 @@ function enviar(){
 
 
 
-let largura_imagem_original = 640;
-let altura_imagem_original = 480;
+let largura_imagem_original = {{ info_foto['largura'] }};
+let altura_imagem_original = {{ info_foto['altura'] }};
 
 var clicou = false;
 
@@ -152,11 +153,15 @@ window.onload = function(){
     document.getElementById('imagem').style.height = (razao * altura_imagem_original) + 'px';
 }
 
-var id_id = Math.random();
-criaQuadradoFlask(165,165,209,84,id_id);
 
-var id_id = Math.random();
-criaQuadradoFlask(165,165,100,50,id_id);
+{% for face in faces %}
+    {% set largura = face['w'] %}
+    {% set altura = face['h'] %}
+    {% set x = face['x'] %}
+    {% set y = face['y'] %}
+    var id_id = {{ face['id_coordenada'] }};
+    criaQuadradoFlask({{ largura }}, {{ altura }}, {{ x }}, {{ y }}, id_id);
+{% endfor %}
 
 
 var adicao = false;

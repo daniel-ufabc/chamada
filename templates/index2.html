@@ -102,16 +102,18 @@
 						</tr>
 					</thead>
 					<tbody>
+					{% for chamada in chamadas_pendentes %}
 						<tr>
-							<td>Funcoes de varias variveis</td>
-							<td>2019-05-01</td>
+							<td>{{ buscaTurma(chamada['id_turma'])[0]['nome_turma'] }}</td>
+							<td>{{ chamada['data_chamada'] }}</td>
 							<td>
-								<form action="/excluir_chamada" method="post">
-									<input hidden="hidden" type="text" name="id_chamada" value="">
+								<form action="marcar_presenca" method="post">
+									<input hidden="hidden" type="text" name="id_chamada" value="{{ chamada['id_chamada'] }}">
 									<button class="btn btn-transparent" type="submit"><i class="fas fa-user-check"></i></button>
 								</form>
 							</td>
 						</tr>
+					{% endfor %}
 					</tbody>
 				</table>
 			</div>
@@ -134,11 +136,13 @@
 						</tr>
 					</thead>
 					<tbody>
+					{% for chamada in chamadas_ativas %}
 						<tr>
-							<td>Funcoes de varias variveis</td>
-							<td>2019-05-01</td>
+							<td>{{ buscaTurma(chamada['id_turma'])[0]['nome_turma'] }}</td>
+							<td>{{ chamada['data_chamada'] }}</td>
 							<td>Presente</td>
 						</tr>
+					{% endfor %}
 					</tbody>
 				</table>
 			</div>

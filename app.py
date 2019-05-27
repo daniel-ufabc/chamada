@@ -2,13 +2,14 @@ from autentica_usuario import autenticaUsuario
 from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal, nomeArquivo
 from banco_tb_usuarios import buscaUsuario
 from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma
-from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes, publicaChamadaIdChamada, excluiChamadaIdChamada, listaChamadasAtivas
+from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes, publicaChamadaIdChamada, excluiChamadaIdChamada, listaChamadasAtivas, buscaChamadaIdTurma
 from banco_turma_horarios import buscaHorarioTurma
 from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaFotoIdChamada
 from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto, buscaCoordenadaAtiva
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from openCV import dimensoesImagem
 from banco_tb_turma_alunos import listaTurmasAluno, excluiTurmaAluno
+from banco_tb_presenca_alunos import buscaPresenca, marcaPresenca
 import json
 
 app = Flask(__name__)
@@ -28,7 +29,17 @@ def painel_professor():
             return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas, buscaFacesIdFoto=buscaFacesIdFoto, buscaCoordenadaAtiva=buscaCoordenadaAtiva, buscaFotoIdChamada=buscaFotoIdChamada, len=len)
         if session['id_permissao'] == 0:
             turmas = listaTurmasAluno(session['id_usuario'])
-            return render_template('index2.html', lista_de_turmas=turmas, buscaTurma=buscaTurma)
+            chamadas_pendentes = []
+            chamadas_ativas = []
+            for turma in turmas:
+                for chamada in buscaChamadaIdTurma(turma['id_turma']):
+                    if buscaPresenca(session['id_usuario'], chamada['id_chamada']):
+                        chamadas_ativas.append(chamada)
+                    else:
+                        chamadas_pendentes.append(chamada)
+
+
+            return render_template('index2.html', lista_de_turmas=turmas, buscaTurma=buscaTurma, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas)
     else:
         return redirect('/login')
 
@@ -122,6 +133,23 @@ def removeTurmaAluno():
     id_turma = request.form['id_turma']
     excluiTurmaAluno(id_usuario, id_turma)
     return redirect('/')
+
+@app.route('/marcar_presenca', methods=['POST'])
+def marcarPresenca():
+    id_chamada = request.form['id_chamada']
+    info_foto = buscaFotoIdChamada(id_chamada)[0]
+    nome_arquivo = info_foto['nome_arquivo']
+    coordenadas_faces = buscaFacesIdFoto(info_foto['id_foto'])
+    return render_template('marcar_presenca.html', nome_arquivo=nome_arquivo, info_foto=info_foto, faces=coordenadas_faces, id_chamada=id_chamada)
+
+@app.route('/marcar_chamada', methods=['POST'])
+def marcaChamda():
+    id_coordenada = request.form['id_coordenada']
+    id_usuario = session['id_usuario']
+    id_chamada = request.form['id_chamada']
+    marcaPresenca(id_usuario, id_chamada, id_coordenada)
+    return redirect('/')
+
 
 @app.route('/uploads/<nome_arquivo>')
 def imagem(nome_arquivo):

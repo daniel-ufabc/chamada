@@ -74,4 +74,15 @@ def listaChamadasAtivas(id_usuario):
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
 
-print(listaChamadasAtivas(1))
+def buscaChamadaIdTurma(id_turma):
+    chamada = (id_turma,)
+    query = "SELECT * FROM tb_chamadas WHERE id_turma=%s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, chamada)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
+
+
+
+
