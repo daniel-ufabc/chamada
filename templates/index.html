@@ -55,7 +55,7 @@
 						<h5 class="card-title">Nova chamada</h5>
 						<p class="card-text">Realize o upload de uma foto e uma nova chamada será gerada automaticamente</p>
                         <div id="div_upload_photo">
-                            <button style="border: 1px solid red" id="button_add" class="btn btn-transparent" type="button">
+                            <button id="button_add" class="btn btn-transparent" type="button">
                                 <div class="text-center">
                                     <img style="width: 25%" src="../static/css/photo-upload-icon.png">
                                 </div>
@@ -63,7 +63,7 @@
                         </div>
                         
                         <div id="formulario_chamada" style="display: none">
-                            <form action="/criar_chamada" method="post" enctype="multipart/form-data">
+                            <form id="form_nova_chamada" action="/criar_chamada" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-10">
                                         <div class="input-group">
@@ -89,8 +89,12 @@
                                                 <div class="input-group-text">Turma: </div>
                                             </div>
                                             <select id="input_turma" name="id_turma" class="custom-select" disabled>
-                                                <option selected value="7">FVV</option>
-                                                <option value="9">FETERM</option>
+												<option value="">-- SELECIONE A TURMA --</option>
+										{% for turma in lista_de_turmas %}
+											{% if turma['id_status'] == 1 %}
+                                                <option value="{{ turma['id_turma'] }}">{{ turma['nome_turma'] }}</option>
+											{% endif %}
+										{% endfor %}
                                             </select>
                                         </div>
                                     </div>
@@ -101,7 +105,7 @@
                                         <button type="button" class="btn btn-danger btn-lg py-4 my-3" onclick="cancelaUpload()">X</button>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Cadastrar</button>
+                                <button type="button" onclick="enviaFormChamada()" class="btn btn-primary btn-lg btn-block mt-3">Cadastrar</button>
                                 <input name="foto_upload" id="input_file" type="file" hidden="hidden" onchange="showImage.call(this)">
                             </form>
                         </div>
@@ -366,17 +370,18 @@
     <script src="../static/js/exif.js" type="text/javascript"></script>
     
     <script>
+
         function metadados(tag_img, input_arquivo, input_data_chamada, input_horario) {
                 var nome_arquivo = input_file.files[0]['name'];
                 input_arquivo.setAttribute("value", nome_arquivo);
                 EXIF.getData(tag_img, function() {
                     myData = tag_img;
+                    console.log(myData.exifdata);
                     var input_file = document.getElementById("input_file");
                     var data_arquivo = myData.exifdata.DateTimeOriginal.split(" ")[0];
                     var horario_arquivo = myData.exifdata.DateTimeOriginal.split(" ")[1];
                     input_data_chamada.setAttribute("value", formataData(data_arquivo));
                     input_horario.setAttribute("value", formataHorario(horario_arquivo));
-                    console.log(myData.exifdata);
                 });
             }
         
@@ -393,6 +398,8 @@
     
     
     <script>
+
+    	let horario_turmas = {{ horario_turmas|tojson }}
         
         const button_add = document.getElementById("button_add");
         const input_file = document.getElementById("input_file");
@@ -414,7 +421,6 @@
                     image_preview.setAttribute("id", "img_preview");
                     div_upload_photo.appendChild(image_preview);
                     div_upload_photo.className = "my-3";
-                    div_upload_photo.style = "border: 1px solid red";
                 }
                 obj.readAsDataURL(this.files[0]);
                 formulario_chamada.style.display = "block";
@@ -427,11 +433,26 @@
                 var input_data_chamada = document.getElementById("input_data_chamada");
                 var input_horario = document.getElementById("input_horario");
                 metadados(img_preview, input_arquivo, input_data_chamada, input_horario);
+                let data = separaData();
+                let horario = separaHorario();
+                let nome_turma = procuraDataCompativel(horario_turmas, data['dia'], data['mes'], data['ano'], horario['hora']);
+                selecionaTurma(nome_turma);
                 clearTimeout(intervalo_espera);
             }, 800);
             
         }
-        
+
+        function selecionaTurma(nome){
+        	if(nome){
+        		let option = document.getElementsByTagName('option');
+				for(let i=0; i < option.length; i++){
+					if(option[i].innerText == nome){
+					option[i].setAttribute('selected', true);
+					}
+				}
+        	}
+        }
+
         
         function desabilita_campo(booleano){
         	console.log(booleano);
@@ -448,8 +469,6 @@
         		input_horario.removeAttribute('readonly');
         		input_turma.removeAttribute('disabled');
         	}
-
-
         }
         
         
@@ -479,12 +498,73 @@
             return botao;
         }
         
-        
-        
+
+		Date.prototype.getWeek = function() {
+  			var onejan = new Date(this.getFullYear(),0,1);
+  			return Math.ceil ((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
+		}
+
+
+		function procuraDataCompativel(horarios, dia, mes, ano, hora){
+			let data = new Date(ano, mes-1, dia);
+			let weekNumber = data.getWeek();
+			let semanal = weekNumber%2 == 0 ? 2: 1;
+			let dia_da_semana = data.getDay() + 1;
+			console.log(data);
+			console.log(dia_da_semana);
+			let dia_semanal = semanal == 1? dia_da_semana: dia_da_semana+7;
+			console.log(dia_semanal);
+			for(let i=0; i < horarios.length; i++){
+				if(horarios[i]['dia_semanal'] == dia_semanal){
+					if(hora >= horarios[i]['horario'] && hora <= horarios[i]['horario']+2){
+						return horarios[i]['nome'];
+					}
+				}
+			}
+		}
+
+
+		function separaData() {
+			let input_data = document.getElementById('input_data_chamada');
+			let data = input_data.value.split('-');
+			data =  {"ano": data[0], "mes": data[1], "dia": data[2] };
+			return data;
+		}
+
+
+		function separaHorario() {
+			let input_horario = document.getElementById('input_horario');
+			let horario = input_horario.value.split(':');
+			horario =  {"hora": horario[0], "minuto": horario[1]};
+			return horario;
+		}
+
+		function validaFormularioNovaChamada(){
+			let input_arquivo = document.getElementById('input_arquivo');
+        	let input_data_chamada = document.getElementById('input_data_chamada');
+        	let input_horario = document.getElementById('input_horario');
+        	let input_turma = document.getElementById('input_turma');
+        	let inputs = [input_arquivo, input_data_chamada, input_horario, input_turma];
+        	for(let i=0; i < inputs.length; i++){
+        		if(inputs[i].value == ""){
+        			return false;
+        		}
+        	}
+        	return true;
+		}
+
+        function enviaFormChamada(){
+        	let form = document.getElementById('form_nova_chamada');
+        	desabilita_campo(false);
+        	if(validaFormularioNovaChamada()){
+        		form.submit();
+        	}
+        	else{
+        		alert("Preencha todos os dados");
+        	}
+        }
     </script>
-            
-    
-    
+
 
 </body>
 </html>

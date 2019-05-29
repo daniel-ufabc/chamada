@@ -44,9 +44,11 @@
         <div style="height: 200px"></div>
             <div class="">
                 <form action="/marcar_chamada", method="post">
-                    <input type="text" name="id_coordenada" id="id_coordenada">
-                    <input type="text" name="id_chamada" value="{{ id_chamada }}">
-                    <input type="submit" id="botao_submit">
+                    <div class="d-none">
+                        <input type="text" name="id_coordenada" id="id_coordenada">
+                        <input type="text" name="id_chamada" value="{{ id_chamada }}">
+                        <input type="submit" id="botao_submit">
+                    </div>
                 </form>
             </div> 
         </div>

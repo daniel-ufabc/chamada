@@ -26,7 +26,15 @@ def painel_professor():
             turmas = listaTurmas(session['id_usuario'])
             chamadas_pendentes = listaChamadasPendentes(session['id_usuario'])
             chamadas_ativas = listaChamadasAtivas(session['id_usuario'])
-            return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas, buscaFacesIdFoto=buscaFacesIdFoto, buscaCoordenadaAtiva=buscaCoordenadaAtiva, buscaFotoIdChamada=buscaFotoIdChamada, len=len)
+            horario_turmas = []
+            for turma in turmas:
+                if turma['id_status'] == 1:
+                    horarios = buscaHorarioTurma(turma['id_turma'])
+                    for horario in horarios:
+                        h = {'nome': turma['nome_turma'], 'dia_semanal': horario['id_dia_semanal'], 'horario': horario['horario'] }
+                        horario_turmas.append(h)
+            print(horario_turmas)
+            return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas, buscaFacesIdFoto=buscaFacesIdFoto, buscaCoordenadaAtiva=buscaCoordenadaAtiva, buscaFotoIdChamada=buscaFotoIdChamada, len=len, horario_turmas=horario_turmas)
         if session['id_permissao'] == 0:
             turmas = listaTurmasAluno(session['id_usuario'])
             chamadas_pendentes = []
@@ -37,8 +45,6 @@ def painel_professor():
                         chamadas_ativas.append(chamada)
                     else:
                         chamadas_pendentes.append(chamada)
-
-
             return render_template('index2.html', lista_de_turmas=turmas, buscaTurma=buscaTurma, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas)
     else:
         return redirect('/login')
