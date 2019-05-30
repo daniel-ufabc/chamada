@@ -1,8 +1,6 @@
-import banco_tb_usuarios
+from banco_tb_usuarios import buscaUsuario
 
 def autenticaUsuario(email, senha):
-    resposta = banco_tb_usuarios.buscaUsuario(email,senha)
-    if len(resposta) == 1:
+    if buscaUsuario(email=email, senha=senha):
         return True
-    else:
-        return False
+    return False

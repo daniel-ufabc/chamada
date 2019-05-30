@@ -1,11 +1,21 @@
 from conecta import conecta
 from funcoes_auxiliares import dicionario
 
-def buscaUsuario(email, senha):
-    login = (email, senha)
-    query = "SELECT * FROM tb_usuarios WHERE email=%s AND senha=%s"
+def buscaUsuario(email=None, senha=None):
+    parametros = {'email': email, 'senha': senha}
+    parametros_validos = {}
+    query = "SELECT * FROM tb_usuarios WHERE"
+    for chave in parametros:
+        if parametros[chave] is not None:
+            parametros_validos[chave] = parametros[chave]
+            query += " {} = %s AND".format(chave)
+    query = query[:-4]
+    valores = tuple(parametros_validos.values())
     mydb = conecta()
     mycursor = mydb.cursor()
-    mycursor.execute(query, login)
+    mycursor.execute(query, valores)
     resposta = dicionario(mycursor.description, mycursor.fetchall())
-    return resposta
+    if len(resposta) == 1:
+        return resposta[0]
+    else:
+        return resposta

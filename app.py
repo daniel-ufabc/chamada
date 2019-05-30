@@ -59,8 +59,8 @@ def autenticaLogin():
     senha = request.form['senha']
     if autenticaUsuario(email, senha):
         session['autenticado'] = True
-        session['id_usuario'] = buscaUsuario(email,senha)[0]['id_usuario']
-        session['id_permissao'] = buscaUsuario(email,senha)[0]['id_permissao']
+        session['id_usuario'] = buscaUsuario(email=email, senha=senha)['id_usuario']
+        session['id_permissao'] = buscaUsuario(email=email, senha=senha)['id_permissao']
         return redirect('/')
     else:
         session['autenticado'] = False
