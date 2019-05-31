@@ -19,3 +19,12 @@ def buscaUsuario(email=None, senha=None):
         return resposta[0]
     else:
         return resposta
+
+def buscaRA(id_usuario):
+    usuario = (id_usuario,)
+    query = "SELECT RA from tb_usuarios WHERE id_usuario = %s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, usuario)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta[0]

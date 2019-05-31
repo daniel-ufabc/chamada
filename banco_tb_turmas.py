@@ -46,3 +46,4 @@ def buscaTurma(id_turma):
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
 
+print(listaTurmas(1))

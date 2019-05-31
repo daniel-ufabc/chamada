@@ -32,5 +32,3 @@ def nomeArquivo(id_chamada, nome_arquivo):
 
 
 
-
-
