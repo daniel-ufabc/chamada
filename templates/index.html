@@ -284,10 +284,20 @@
 												</p>
 											</div>
 											<div class="col-6 text-right">
-												<form action="/arquivar_turma" method="post">
-													<input type="hidden" name="id_turma_arquivar" value="{{ turma['id_turma'] }}">
-													<button class="btn btn-outline-danger" type="submit"><i class="fas fa-trash"></i></button>
-												</form>
+												<div class="row justify-content-end">
+													<div class="col-2">
+														<form action="/arquivar_turma" method="post">
+															<input type="hidden" name="id_turma_arquivar" value="{{ turma['id_turma'] }}">
+															<button class="btn btn-outline-danger" type="submit"><i class="fas fa-trash"></i></button>
+														</form>
+													</div>
+													<div class="col-2">
+														<form action="/editar_dados_turma" method="post">
+															<input type="hidden" name="id_turma_editar" value="{{ turma['id_turma'] }}">
+															<button class="btn btn-outline-dark" type="submit"><i class="fas fa-pencil-alt"></i></button>
+														</form>
+													</div>
+												</div>
 											</div>
 										</div>
 

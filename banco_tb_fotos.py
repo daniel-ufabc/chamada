@@ -43,5 +43,5 @@ def deletaFotoIdFoto(id_foto):
     mycursor.execute(query, foto)
     mydb.commit()
 
-
+print(buscaFotoIdChamada(73))
 

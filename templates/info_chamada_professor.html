@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <title>Sistema de contagem de faltas</title>
+    <style type="text/css">
+        #imagem{
+            background-image: url({{ url_for('imagem', nome_arquivo=nome_arquivo) }});
+            background-size: cover;
+            width: 100%;
+            border: 1px solid red;
+        }
+</style>
+</head>
+<body>
+    <!-- Topo -->
+    <div class="container">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="/">
+                <img src="../static/css/ufabc-logo.svg" width="50" height="50" class="mr-2"><span>UFABC</span>
+            </a>
+            <a href="/logout" class="btn btn-outline-danger">Sair</a>
+        </nav>
+    </div>
+    <!-- Conteudo -->
+    <div class="container my-5">
+        <div class="my-5 text-center">
+            <button class="btn btn-dark" onclick="removeFiltros()">Remove filtros</button>
+            <button class="btn btn-success" onclick="mostraAtivos()">Mostrar ativos</button>
+            <button class="btn btn-primary" onclick="mostraPendentes()">Mostrar pendentes</button>
+            <button class="btn btn-danger" onclick="mostraErros()">Mostrar erros</button>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="mx-auto" id="imagem"></div>
+            </div>
+        </div>
+        <div style="height: 200px"></div>
+        </div>
+    </div>
+</div>
+</div>
+<script>
+function criaQuadrado(largura, altura, x, y, id, status){
+    var div = document.createElement('div');
+    div_img = document.getElementById('imagem');
+    div_img.appendChild(div);
+    div.style.border = "1px solid red";
+    div.style.height = altura + 'px';
+    div.style.width = largura + 'px';
+    div.style.position = "absolute";
+    div.style.marginLeft = x + 'px';
+    div.style.marginTop = y + 'px';
+    div.setAttribute('id', id);
+    div.setAttribute('class', status);
+}
+
+function criaQuadradoFlask(largura, altura, x, y, id, status){
+    var largura_imagem  = document.getElementById('imagem').offsetWidth;
+    var razao = (largura_imagem/largura_imagem_original);
+    var n_largura = largura * razao;
+    var n_altura = altura * razao;
+    var n_x = x * razao;
+    var n_y = y * razao;
+    criaQuadrado(n_largura, n_altura, n_x, n_y, id, status);
+}
+
+function posicaoElemento(id){
+    elemento = document.getElementById(id);
+    var x_absoluto = elemento.getBoundingClientRect().left;
+    var y_absoluto = elemento.getBoundingClientRect().top;
+    return {'x':  x_absoluto, 'y': y_absoluto};
+}
+
+function mostraAtivos(){
+    let ativos = document.getElementsByClassName('ativo');
+    for(let i=0; i < ativos.length; i++){
+        ativos[i].style.backgroundColor = "rgba(0,245,255,0.3)";
+    }
+}
+
+function mostraPendentes(){
+    let pendentes = document.getElementsByClassName('pendente');
+    for(let i=0; i < pendentes.length; i++){
+        pendentes[i].style.backgroundColor = "rgba(0,245,255,0.3)";
+    }
+}
+
+function mostraErros(){
+    let erros = document.getElementsByClassName('multiplo');
+    for(let i=0; i < erros.length; i++){
+        erros[i].style.backgroundColor = "rgba(255,0,0,0.3)";
+    }
+}
+
+function removeFiltros(){
+    let ativos = document.getElementsByClassName('ativo');
+    for(let i=0; i < ativos.length; i++){
+        ativos[i].style.backgroundColor = "rgba(255,255,255,0)";
+    }
+    let erros = document.getElementsByClassName('multiplo');
+    for(let i=0; i < erros.length; i++){
+        erros[i].style.backgroundColor = "rgba(255,255,255,0)";
+    }
+    let pendentes = document.getElementsByClassName('pendente');
+    for(let i=0; i < pendentes.length; i++){
+        pendentes[i].style.backgroundColor = "rgba(255,255,255,0)";
+    }
+}
+
+
+
+let largura_imagem_original = {{ info_foto['largura'] }};
+let altura_imagem_original = {{ info_foto['altura'] }};
+
+var clicou = false;
+
+var largura = 100;
+var altura = 100;
+
+
+window.onload = function(){
+    var input_largura_selecao = document.getElementById('input_largura_selecao');
+    var input_altura_selecao = document.getElementById('input_altura_selecao');
+    var div = document.getElementById('imagem');
+    var div_w = div.offsetWidth;
+    let razao = div_w/largura_imagem_original;
+    document.getElementById('imagem').style.height = (razao * altura_imagem_original) + 'px';
+}
+
+
+{% for face in faces %}
+    {% set largura = face['w'] %}
+    {% set altura = face['h'] %}
+    {% set x = face['x'] %}
+    {% set y = face['y'] %}
+    {% set status = "" %}
+    {% if face['id_status'] == 0 %}
+        {% set status = "pendente"%}
+    {% endif %}
+    {% if face['id_status'] == 1 %}
+        {% set status = "ativo"%}
+    {% endif %}
+    {% if face['id_status'] > 1 %}
+        {% set status = "multiplo"%}
+    {% endif %}
+    var id_id = {{ face['id_coordenada'] }};
+    criaQuadradoFlask({{ largura }}, {{ altura }}, {{ x }}, {{ y }}, id_id, '{{ status }}');
+{% endfor %}
+
+
+var adicao = false;
+var excluir = false;
+
+</script>
+</body>
+</html>

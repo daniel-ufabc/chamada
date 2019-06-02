@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <title>Sistema de contagem de faltas</title>
+</head>
+<body>
+    <!-- Topo -->
+    <div class="container">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="/">
+                <img src="../static/css/ufabc-logo.svg" width="50" height="50" class="mr-2"><span>UFABC</span>
+            </a>
+            <a href="/logout" class="btn btn-outline-danger">Sair</a>
+        </nav>
+    </div>
+
+    <!-- Conteudo -->
+    <div class="container my-5">
+        <div>
+            <button type="button" onclick="adicionaHorario()"><i class="fas fa-plus"></i></button>
+        </div>
+
+        <p>
+            <span>Alunos: </span>
+            <span>{{ turma['qtd_alunos'] }}</span>
+        </p>
+        <p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Dia da semana</th>
+                        <th>Semanal</th>
+                        <th>Horario do dia</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    {% for horario in horarios%}
+                        <tr>
+                            <td>{{ horario['dia_da_semana'] }}</td>
+                            <td>{{ semanal(horario['id_dia_semanal'])}}</td>
+                            <td>{{ horario['horario'] }}<span>h</span></td>
+                            <td>
+                                <form action="/editar_dados_turma" method="post">
+                                    <input name="id_turma" hidden="hidden" type="text" value="{{ turma['id_turma'] }}">
+                                    <input name="id_dia_semanal" hidden="hidden" type="text" value="{{ horario['id_dia_semanal'] }}">
+                                    <input name="horario" hidden="hidden" type="text" value="{{ horario['horario'] }}">
+                                    <button class="btn btn-outline-danger" name="comando" value="excluir"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </p>
+    </div>
+
+</body>
+
+<script>
+function adicionaHorario(){
+    let formulario = criaFormulario();
+    let select = criaSelect();
+    let input_horario = criaInputHorario();
+    let botao = criaBotao();
+    let div = criaDiv(select, input_horario, botao);
+    formulario.appendChild(div);
+    formulario.appendChild(criaInputIdTurma());
+    formulario.appendChild(criaInputComando());
+    let linha = document.createElement('tr');
+    let coluna = document.createElement('td');
+    coluna.appendChild(formulario);
+    linha.appendChild(coluna);
+    let tbody = document.getElementById('tbody');
+    tbody.appendChild(linha);
+}
+
+function criaFormulario(){
+    let formulario = document.createElement('form');
+    formulario.setAttribute('id', 'formulario_adiciona_horario');
+    formulario.setAttribute('action', '/editar_dados_turma');
+    formulario.setAttribute('method', 'post');
+    return formulario;
+}
+
+function criaInputHorario(){
+    let input_horario = document.createElement('input');
+    input_horario.setAttribute('type', 'number');
+    input_horario.setAttribute('min', 0);
+    input_horario.setAttribute('max', 23);
+    input_horario.setAttribute('id', 'input_horario');
+    input_horario.setAttribute('class', 'form-control');
+    input_horario.setAttribute('name', 'horario');
+    return input_horario;
+}
+
+function criaBotao(){
+    let botao = document.createElement('button');
+    botao.setAttribute('class', 'btn btn-success');
+    botao.setAttribute('type', 'button');
+    botao.setAttribute('onclick', 'envia()');
+    botao.innerText = "salvar";
+    return botao;
+}
+
+function criaSelect(){
+    let select = document.createElement('select');
+    select.setAttribute('name', 'id_dia_semanal');
+    select.setAttribute('id', 'select');
+    select.setAttribute('class', 'form-control');
+    let dias_semanal = ['Domingo       [semanal 1]',
+                        'Segunda-feira [semanal 1]',
+                        'Terça-feira   [semanal 1]',
+                        'Quarta-feira  [semanal 1]',
+                        'Quinta-feira  [semanal 1]',
+                        'Sexta-feira   [semanal 1]',
+                        'Sábado        [semanal 1]',
+                        'Domingo       [semanal 2]',
+                        'Segunda-feira [semanal 2]',
+                        'Terça-feira   [semanal 2]',
+                        'Quarta-feira  [semanal 2]',
+                        'Quinta-feira  [semanal 2]',
+                        'Sexta-feira   [semanal 2]',
+                        'Sábado        [semanal 2]'];
+        for(let i=0; i<14; i++){
+            let option = document.createElement('option');
+            option.innerText = dias_semanal[i];
+            option.setAttribute('value', i+1);
+            select.appendChild(option);
+        }
+    return select;
+}
+
+function envia(){
+    let input_horario = document.getElementById('input_horario');
+    let select = document.getElementById('select');
+    if(input_horario.value != "" && select.value != ""){
+        let formulario = document.getElementById('formulario_adiciona_horario');
+        formulario.submit();
+    }
+}
+
+function criaDiv(elemento1, elemento2, elemento3){
+    let elementos = [elemento1, elemento2, elemento3];
+    let div_principal = document.createElement('div');
+    div_principal.setAttribute('class', 'row');
+    for(let i=0; i<3; i++){
+        let div = document.createElement('div');
+        div.setAttribute('class', 'col');
+        div.appendChild(elementos[i]);
+        div_principal.appendChild(div);
+    }
+    return div_principal;
+}
+
+function criaInputIdTurma(){
+    let input_id_turma = document.createElement('input');
+    input_id_turma.setAttribute('type', 'text');
+    input_id_turma.setAttribute('hidden', 'hidden');
+    input_id_turma.setAttribute('name', 'id_turma');
+    input_id_turma.setAttribute('value', {{ turma['id_turma'] }});
+    return input_id_turma;
+}
+
+function criaInputComando(){
+    let input_comando = document.createElement('input');
+    input_comando.setAttribute('type', 'text');
+    input_comando.setAttribute('hidden', 'hidden');
+    input_comando.setAttribute('name', 'comando');
+    input_comando.setAttribute('value', 'adicionar')
+    return input_comando;
+}
+
+
+</script>
+
+</html>

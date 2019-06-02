@@ -3,7 +3,7 @@ from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal, nomeArqui
 from banco_tb_usuarios import buscaUsuario, buscaRA
 from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma
 from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes, publicaChamadaIdChamada, excluiChamadaIdChamada, listaChamadasAtivas, buscaChamadaIdTurma, buscaChamadaIdChamada
-from banco_turma_horarios import buscaHorarioTurma
+from banco_turma_horarios import buscaHorarioTurma, excluirHorario, adicionaHorario
 from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaFotoIdChamada
 from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto, buscaCoordenadaAtiva
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
@@ -20,7 +20,7 @@ def testeUI():
     return render_template('index.html')
 
 @app.route('/')
-def painel_professor():
+def painel():
     if 'autenticado' in session and session['autenticado']:
         if session['id_permissao'] == 1:
             turmas = listaTurmas(session['id_usuario'])
@@ -94,17 +94,21 @@ def criarChamada():
     data_chamada = request.form['input_data_chamada']
     id_turma = request.form['id_turma']
     id_usuario = session['id_usuario']
-    cadastraNovaChamada(id_usuario, id_turma, data_chamada)
-    info_chamada = buscaChamada(id_usuario, id_turma, data_chamada)[0]
-    nome_arquivo = nomeArquivo(info_chamada['id_chamada'], request.form['nome_arquivo'])
-    arquivo = request.files['foto_upload']
-    cadastraNovafoto(nome_arquivo, id_usuario, info_chamada['id_chamada'])
-    arquivo.save('uploads/{}'.format(nome_arquivo))
-    dimensoes = dimensoesImagem(nome_arquivo)
-    atualizaDimensao(dimensoes['largura'], dimensoes['altura'], nome_arquivo)
-    info_foto = buscaFoto(nome_arquivo)[0]
-    detectaFaces(nome_arquivo, id_usuario, info_foto['id_foto'])
-    return redirect('/')
+    if not buscaChamada(id_usuario, id_turma, data_chamada):
+        cadastraNovaChamada(id_usuario, id_turma, data_chamada)
+        info_chamada = buscaChamada(id_usuario, id_turma, data_chamada)[0]
+        nome_arquivo = nomeArquivo(info_chamada['id_chamada'], request.form['nome_arquivo'])
+        arquivo = request.files['foto_upload']
+        cadastraNovafoto(nome_arquivo, id_usuario, info_chamada['id_chamada'])
+        arquivo.save('uploads/{}'.format(nome_arquivo))
+        dimensoes = dimensoesImagem(nome_arquivo)
+        atualizaDimensao(dimensoes['largura'], dimensoes['altura'], nome_arquivo)
+        info_foto = buscaFoto(nome_arquivo)[0]
+        detectaFaces(nome_arquivo, id_usuario, info_foto['id_foto'])
+        return redirect('/')
+    else:
+        flash('Chamada ja existe')
+        return redirect('/')
 
 @app.route('/chamada', methods=['POST'])
 def confirmaChamada():
@@ -163,6 +167,35 @@ def relatorioProfessor():
     frequencias = geraRelatorioProfessor(lista_turmas)
     print(frequencias)
     return render_template('relatorio_professor.html', frequencias=frequencias, buscaRA=buscaRA)
+
+@app.route('/detalhes_chamada', methods=['POST'])
+def detalhesChamada():
+    id_chamada = request.form['id_chamada']
+    info_foto = buscaFotoIdChamada(id_chamada)[0]
+    nome_arquivo = info_foto['nome_arquivo']
+    coordenadas_faces = buscaFacesIdFoto(info_foto['id_foto'])
+    return render_template('info_chamada_professor.html', nome_arquivo=nome_arquivo, faces=coordenadas_faces, info_foto=info_foto)
+
+@app.route('/editar_dados_turma', methods=['POST'])
+def editarDadosTurma():
+    id_turma = ""
+    if 'comando' in request.form:
+        if request.form['comando'] == 'excluir':
+            id_turma = request.form['id_turma']
+            id_dia_semanal = request.form['id_dia_semanal']
+            horario = request.form['horario']
+            excluirHorario(id_turma, id_dia_semanal, horario)
+        if request.form['comando'] == 'adicionar':
+            id_turma = request.form['id_turma']
+            id_dia_semanal = request.form['id_dia_semanal']
+            horario = request.form['horario']
+            adicionaHorario(id_turma, id_dia_semanal, horario)
+        id_turma = request.form['id_turma']
+    else:
+        id_turma = request.form['id_turma_editar']
+    turma = buscaTurma(id_turma)[0]
+    horarios = buscaHorarioTurma(id_turma)
+    return render_template('editar_dados_turma.html', horarios=horarios, turma=turma, semanal=semanal)
 
 
 
