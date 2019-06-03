@@ -1,5 +1,3 @@
-import datetime
-
 def dicionario(colunas, valores):
     resposta = []
     for valor in valores:

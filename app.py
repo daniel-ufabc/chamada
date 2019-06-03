@@ -50,7 +50,7 @@ def painel():
                         chamadas_ativas_ausente.append(chamada)
                     else:
                         chamadas_pendentes.append(chamada)
-            return render_template('index2.html', lista_de_turmas=turmas, buscaTurma=buscaTurma, chamadas_pendentes=chamadas_pendentes, chamadas_ativas_presente=chamadas_ativas_presente , chamadas_ativas_ausente=chamadas_ativas_ausente, todas_turmas=todas_turmas)
+            return render_template('index2.html', len=len, lista_de_turmas=turmas, buscaTurma=buscaTurma, chamadas_pendentes=chamadas_pendentes, chamadas_ativas_presente=chamadas_ativas_presente , chamadas_ativas_ausente=chamadas_ativas_ausente, todas_turmas=todas_turmas)
     else:
         return redirect('/login')
 
