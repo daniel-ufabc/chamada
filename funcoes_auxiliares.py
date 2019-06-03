@@ -29,7 +29,7 @@ def nomeArquivo(id_chamada, nome_arquivo):
     nome_final = "{}.{}".format(id_chamada, extensao)
     return nome_final
 
-def ordenaChamadasAtivas(turma):
+def ordenaChamadas(turma):
     return turma['data_chamada']
 
 

@@ -1,5 +1,5 @@
 from autentica_usuario import autenticaUsuario
-from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal, nomeArquivo, ordenaChamadasAtivas
+from funcoes_auxiliares import limpaDicionario, removeEspaco, semanal, nomeArquivo, ordenaChamadas
 from banco_tb_usuarios import buscaUsuario, buscaRA
 from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma, criaTurma, buscaTodasAsTurmas
 from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes, publicaChamadaIdChamada, excluiChamadaIdChamada, listaChamadasAtivas, buscaChamadaIdTurma, buscaChamadaIdChamada
@@ -27,7 +27,7 @@ def painel():
             turmas = listaTurmas(session['id_usuario'])
             chamadas_pendentes = listaChamadasPendentes(session['id_usuario'])
             chamadas_ativas = listaChamadasAtivas(session['id_usuario'])
-            chamadas_ativas.sort(key=ordenaChamadasAtivas, reverse=True)
+            chamadas_ativas.sort(key=ordenaChamadas, reverse=True)
             horario_turmas = []
             for turma in turmas:
                 if turma['id_status'] == 1:
@@ -50,6 +50,8 @@ def painel():
                         chamadas_ativas_ausente.append(chamada)
                     else:
                         chamadas_pendentes.append(chamada)
+            chamadas_ativas_presente.sort(key=ordenaChamadas)
+            chamadas_ativas_ausente.sort(key=ordenaChamadas)
             return render_template('index2.html', len=len, lista_de_turmas=turmas, buscaTurma=buscaTurma, chamadas_pendentes=chamadas_pendentes, chamadas_ativas_presente=chamadas_ativas_presente , chamadas_ativas_ausente=chamadas_ativas_ausente, todas_turmas=todas_turmas)
     else:
         return redirect('/login')
