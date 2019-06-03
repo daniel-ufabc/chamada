@@ -16,10 +16,6 @@ import json
 app = Flask(__name__)
 app.secret_key = 'appufabc'
 
-@app.route('/teste')
-def testeUI():
-    return render_template('index.html')
-
 @app.route('/')
 def painel():
     if 'autenticado' in session and session['autenticado']:
