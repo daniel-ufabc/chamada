@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 23, 2019 at 09:29 PM
+-- Generation Time: Jun 03, 2019 at 05:01 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.4
 
@@ -41,7 +41,7 @@ CREATE TABLE `tb_chamadas` (
 --
 
 INSERT INTO `tb_chamadas` (`id_chamada`, `id_usuario`, `data_chamada`, `id_turma`, `id_status`) VALUES
-(48, 1, '2019-06-24', 7, 0);
+(81, 1, '2013-06-19', 9, 1);
 
 -- --------------------------------------------------------
 
@@ -56,26 +56,16 @@ CREATE TABLE `tb_coordenadas` (
   `w` int(11) NOT NULL,
   `h` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
-  `id_foto` int(11) NOT NULL
+  `id_foto` int(11) NOT NULL,
+  `id_status` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `tb_coordenadas`
 --
 
-INSERT INTO `tb_coordenadas` (`id_coordenada`, `x`, `y`, `w`, `h`, `id_usuario`, `id_foto`) VALUES
-(33, 646, 34, 51, 51, 1, 14),
-(34, 362, 45, 54, 54, 1, 14),
-(35, 225, 43, 56, 56, 1, 14),
-(36, 799, 40, 58, 58, 1, 14),
-(37, 493, 48, 56, 56, 1, 14),
-(38, 707, 156, 56, 56, 1, 14),
-(39, 438, 170, 53, 53, 1, 14),
-(40, 587, 167, 53, 53, 1, 14),
-(41, 311, 162, 51, 51, 1, 14),
-(42, 826, 162, 54, 54, 1, 14),
-(43, 202, 202, 56, 56, 1, 14),
-(44, 407, 443, 56, 56, 1, 14);
+INSERT INTO `tb_coordenadas` (`id_coordenada`, `x`, `y`, `w`, `h`, `id_usuario`, `id_foto`, `id_status`) VALUES
+(1804, 168, 42, 127, 127, 1, 43, 1);
 
 -- --------------------------------------------------------
 
@@ -111,6 +101,25 @@ INSERT INTO `tb_dia_semanal` (`id_dia_semanal`, `dia_da_semana`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tb_faltas_alunos`
+--
+
+CREATE TABLE `tb_faltas_alunos` (
+  `id_usuario` int(11) NOT NULL,
+  `id_chamada` int(11) NOT NULL,
+  `id_turma` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tb_faltas_alunos`
+--
+
+INSERT INTO `tb_faltas_alunos` (`id_usuario`, `id_chamada`, `id_turma`) VALUES
+(3, 81, 9);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tb_fotos`
 --
 
@@ -128,7 +137,20 @@ CREATE TABLE `tb_fotos` (
 --
 
 INSERT INTO `tb_fotos` (`id_foto`, `id_usuario`, `largura`, `altura`, `nome_arquivo`, `id_chamada`) VALUES
-(14, 1, 990, 557, '48.jpg', 48);
+(43, 1, 450, 312, '81.jpeg', 81);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_presenca_alunos`
+--
+
+CREATE TABLE `tb_presenca_alunos` (
+  `id_usuario` int(11) NOT NULL,
+  `id_chamada` int(11) NOT NULL,
+  `id_coordenada` int(11) NOT NULL,
+  `id_turma` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -169,9 +191,28 @@ CREATE TABLE `tb_turmas` (
 --
 
 INSERT INTO `tb_turmas` (`id_turma`, `id_usuario`, `nome_turma`, `id_status`, `campus`, `qtd_alunos`) VALUES
-(6, 1, 'Bases Computacionais', 0, 'Santo Andre', 30),
-(7, 1, 'Sistemas digitais', 1, 'Santo Andre', 40),
-(9, 1, 'Calculo vetorial e tensorial', 1, 'Santo Andre', 50);
+(6, 1, 'Bases Computacionais', 1, 'Santo Andre', 30),
+(9, 1, 'Calculo vetorial e tensorial', 1, 'Santo Andre', 50),
+(13, 1, 'Estrutura da materia', 0, 'Santo André', 0),
+(14, 1, 'sistemas digitais', 1, 'Santo André', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_turma_alunos`
+--
+
+CREATE TABLE `tb_turma_alunos` (
+  `id_turma` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tb_turma_alunos`
+--
+
+INSERT INTO `tb_turma_alunos` (`id_turma`, `id_usuario`) VALUES
+(9, 3);
 
 -- --------------------------------------------------------
 
@@ -190,24 +231,9 @@ CREATE TABLE `tb_turma_horarios` (
 --
 
 INSERT INTO `tb_turma_horarios` (`id_turma`, `id_dia_semanal`, `horario`) VALUES
-(6, 2, 8),
-(6, 4, 10),
-(6, 6, 8),
-(6, 8, 10),
-(6, 10, 8),
-(6, 12, 10),
-(7, 2, 19),
-(7, 4, 19),
-(7, 6, 19),
-(9, 2, 19),
-(9, 4, 19),
-(9, 6, 19),
-(7, 2, 19),
-(7, 4, 19),
-(7, 6, 19),
-(9, 2, 19),
-(9, 4, 19),
-(9, 6, 19);
+(6, 1, 8),
+(9, 4, 8),
+(6, 14, 20);
 
 -- --------------------------------------------------------
 
@@ -219,17 +245,18 @@ CREATE TABLE `tb_usuarios` (
   `id_usuario` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
   `senha` varchar(255) NOT NULL,
-  `id_permissao` int(11) NOT NULL DEFAULT '0'
+  `id_permissao` int(11) NOT NULL DEFAULT '0',
+  `RA` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `tb_usuarios`
 --
 
-INSERT INTO `tb_usuarios` (`id_usuario`, `email`, `senha`, `id_permissao`) VALUES
-(1, 'prof1@gmail.com', '1234', 1),
-(2, 'prof2@gmail.com', '1234', 1),
-(3, 'prof3@gmail.com', '1234', 0);
+INSERT INTO `tb_usuarios` (`id_usuario`, `email`, `senha`, `id_permissao`, `RA`) VALUES
+(1, 'prof1@gmail.com', '1234', 1, NULL),
+(2, 'prof2@gmail.com', '1234', 1, NULL),
+(3, 'aluno1@gmail.com', '1234', 0, 1120180000);
 
 --
 -- Indexes for dumped tables
@@ -258,12 +285,29 @@ ALTER TABLE `tb_dia_semanal`
   ADD PRIMARY KEY (`id_dia_semanal`);
 
 --
+-- Indexes for table `tb_faltas_alunos`
+--
+ALTER TABLE `tb_faltas_alunos`
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_chamada` (`id_chamada`),
+  ADD KEY `id_turma` (`id_turma`);
+
+--
 -- Indexes for table `tb_fotos`
 --
 ALTER TABLE `tb_fotos`
   ADD PRIMARY KEY (`id_foto`),
   ADD KEY `id_usuario` (`id_usuario`),
   ADD KEY `id_chamada` (`id_chamada`);
+
+--
+-- Indexes for table `tb_presenca_alunos`
+--
+ALTER TABLE `tb_presenca_alunos`
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_chamada` (`id_chamada`),
+  ADD KEY `id_coordenada` (`id_coordenada`),
+  ADD KEY `id_turma` (`id_turma`);
 
 --
 -- Indexes for table `tb_status_turma`
@@ -276,6 +320,13 @@ ALTER TABLE `tb_status_turma`
 --
 ALTER TABLE `tb_turmas`
   ADD PRIMARY KEY (`id_turma`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
+-- Indexes for table `tb_turma_alunos`
+--
+ALTER TABLE `tb_turma_alunos`
+  ADD KEY `id_turma` (`id_turma`),
   ADD KEY `id_usuario` (`id_usuario`);
 
 --
@@ -299,25 +350,25 @@ ALTER TABLE `tb_usuarios`
 -- AUTO_INCREMENT for table `tb_chamadas`
 --
 ALTER TABLE `tb_chamadas`
-  MODIFY `id_chamada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id_chamada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `tb_coordenadas`
 --
 ALTER TABLE `tb_coordenadas`
-  MODIFY `id_coordenada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id_coordenada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1805;
 
 --
 -- AUTO_INCREMENT for table `tb_fotos`
 --
 ALTER TABLE `tb_fotos`
-  MODIFY `id_foto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_foto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `tb_turmas`
 --
 ALTER TABLE `tb_turmas`
-  MODIFY `id_turma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_turma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tb_usuarios`
@@ -344,6 +395,14 @@ ALTER TABLE `tb_coordenadas`
   ADD CONSTRAINT `tb_coordenadas_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `tb_usuarios` (`id_usuario`);
 
 --
+-- Constraints for table `tb_faltas_alunos`
+--
+ALTER TABLE `tb_faltas_alunos`
+  ADD CONSTRAINT `tb_faltas_alunos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `tb_usuarios` (`id_usuario`),
+  ADD CONSTRAINT `tb_faltas_alunos_ibfk_2` FOREIGN KEY (`id_chamada`) REFERENCES `tb_chamadas` (`id_chamada`),
+  ADD CONSTRAINT `tb_faltas_alunos_ibfk_3` FOREIGN KEY (`id_turma`) REFERENCES `tb_turmas` (`id_turma`);
+
+--
 -- Constraints for table `tb_fotos`
 --
 ALTER TABLE `tb_fotos`
@@ -351,10 +410,26 @@ ALTER TABLE `tb_fotos`
   ADD CONSTRAINT `tb_fotos_ibfk_2` FOREIGN KEY (`id_chamada`) REFERENCES `tb_chamadas` (`id_chamada`);
 
 --
+-- Constraints for table `tb_presenca_alunos`
+--
+ALTER TABLE `tb_presenca_alunos`
+  ADD CONSTRAINT `tb_presenca_alunos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `tb_usuarios` (`id_usuario`),
+  ADD CONSTRAINT `tb_presenca_alunos_ibfk_2` FOREIGN KEY (`id_chamada`) REFERENCES `tb_chamadas` (`id_chamada`),
+  ADD CONSTRAINT `tb_presenca_alunos_ibfk_3` FOREIGN KEY (`id_coordenada`) REFERENCES `tb_coordenadas` (`id_coordenada`),
+  ADD CONSTRAINT `tb_presenca_alunos_ibfk_4` FOREIGN KEY (`id_turma`) REFERENCES `tb_turmas` (`id_turma`);
+
+--
 -- Constraints for table `tb_turmas`
 --
 ALTER TABLE `tb_turmas`
   ADD CONSTRAINT `tb_turmas_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `tb_usuarios` (`id_usuario`);
+
+--
+-- Constraints for table `tb_turma_alunos`
+--
+ALTER TABLE `tb_turma_alunos`
+  ADD CONSTRAINT `tb_turma_alunos_ibfk_1` FOREIGN KEY (`id_turma`) REFERENCES `tb_turmas` (`id_turma`),
+  ADD CONSTRAINT `tb_turma_alunos_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `tb_usuarios` (`id_usuario`);
 
 --
 -- Constraints for table `tb_turma_horarios`
