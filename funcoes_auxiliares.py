@@ -1,3 +1,5 @@
+import datetime
+
 def dicionario(colunas, valores):
     resposta = []
     for valor in valores:
@@ -29,6 +31,7 @@ def nomeArquivo(id_chamada, nome_arquivo):
     nome_final = "{}.{}".format(id_chamada, extensao)
     return nome_final
 
-
+def ordenaChamadasAtivas(turma):
+    return turma['data_chamada']
 
 
