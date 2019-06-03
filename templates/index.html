@@ -137,7 +137,7 @@
 		<div class="modal fade" id="formNovaTurma" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
-					<form class="mx-5">
+					<form class="mx-5" action="cadastar_nova_turma" method="post" id="formulario_nova_turma">
 						<div class="modal-header">
 							<h5 class="modal-title" id="exampleModalLabel">Nova turma</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
@@ -154,11 +154,11 @@
 										<legend class="col-form-label col-2 pt-0">Campus</legend>
 										<div class="col-10">
 											<div class="form-check">
-												<input class="form-check-input" id="campus_sa" type="radio" name="campus" value="Santo André">
+												<input class="form-check-input input_radio" id="campus_sa" type="radio" name="campus" value="Santo André">
 												<label class="form-check-label" for="campus_sa">Santo André</label>
 											</div>
 											<div class="form-check">
-												<input class="form-check-input" id="campus_sbc" type="radio" name="campus" value="São Bernardo">
+												<input class="form-check-input input_radio" id="campus_sbc" type="radio" name="campus" value="São Bernardo">
 												<label class="form-check-label" for="campus_sbc">São Bernardo</label>
 											</div>
 										</div>
@@ -167,7 +167,7 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-							<button type="submit" class="btn btn-primary">Cadastrar</button>
+							<button onclick="enviaFormularioNovaTurma()" type="button" class="btn btn-primary">Cadastrar</button>
 						</div>
 					</form>
 				</div>
@@ -575,6 +575,28 @@
         		alert("Preencha todos os dados");
         	}
         }
+
+        function validaFormularioNovaTurma(){
+			let nome_turma = document.getElementById('nome_turma');
+			nome_turma = nome_turma.value.trim();
+			let input_radio = document.getElementsByClassName('input_radio');
+			for(let i=0; i < input_radio.length; i++){
+				if(input_radio[i].checked && nome_turma != ""){
+					return true;
+				}
+			}
+    	}
+
+    	function enviaFormularioNovaTurma(){
+    		console.log(validaFormularioNovaTurma());
+    		if(validaFormularioNovaTurma()){
+    			document.getElementById('formulario_nova_turma').submit();
+    		}
+    		else{
+    			alert('preencha todos os campos');
+    		}
+    	}
+
     </script>
 
 

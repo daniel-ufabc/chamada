@@ -46,4 +46,14 @@ def buscaTurma(id_turma):
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
 
-print(listaTurmas(1))
+def buscaTodasAsTurmas():
+    query = "SELECT * FROM tb_turmas "
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    turmas = {}
+    turmas['nome_turma'] = [turma['nome_turma'] for turma in resposta]
+    turmas['id_turma'] = [turma['id_turma'] for turma in resposta]
+    return turmas
+

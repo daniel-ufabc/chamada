@@ -23,7 +23,7 @@
     <!-- Conteudo -->
     <div class="container my-5">
         <div>
-            <button type="button" onclick="adicionaHorario()"><i class="fas fa-plus"></i></button>
+            <button class="btn btn-outline-dark" type="button" onclick="adicionaHorario()"><i class="fas fa-plus"></i></button>
         </div>
 
         <p>
@@ -65,20 +65,22 @@
 
 <script>
 function adicionaHorario(){
-    let formulario = criaFormulario();
-    let select = criaSelect();
-    let input_horario = criaInputHorario();
-    let botao = criaBotao();
-    let div = criaDiv(select, input_horario, botao);
-    formulario.appendChild(div);
-    formulario.appendChild(criaInputIdTurma());
-    formulario.appendChild(criaInputComando());
-    let linha = document.createElement('tr');
-    let coluna = document.createElement('td');
-    coluna.appendChild(formulario);
-    linha.appendChild(coluna);
-    let tbody = document.getElementById('tbody');
-    tbody.appendChild(linha);
+    if(!document.getElementById('formulario_adiciona_horario')){
+        let formulario = criaFormulario();
+        let select = criaSelect();
+        let input_horario = criaInputHorario();
+        let botao = criaBotao();
+        let div = criaDiv(select, input_horario, botao);
+        formulario.appendChild(div);
+        formulario.appendChild(criaInputIdTurma());
+        formulario.appendChild(criaInputComando());
+        let linha = document.createElement('tr');
+        let coluna = document.createElement('td');
+        coluna.appendChild(formulario);
+        linha.appendChild(coluna);
+        let tbody = document.getElementById('tbody');
+        tbody.appendChild(linha);
+    }
 }
 
 function criaFormulario(){
