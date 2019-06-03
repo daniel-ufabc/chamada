@@ -47,7 +47,7 @@ def buscaTurma(id_turma):
     return resposta
 
 def buscaTodasAsTurmas():
-    query = "SELECT * FROM tb_turmas "
+    query = "SELECT * FROM tb_turmas WHERE id_status=1"
     mydb = conecta()
     mycursor = mydb.cursor()
     mycursor.execute(query)

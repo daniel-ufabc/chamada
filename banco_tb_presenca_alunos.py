@@ -43,4 +43,19 @@ def geraRelatorioProfessor(lista_turmas):
         frequencias.append(dados)
     return frequencias
 
+def contaPresenca(id_usuario, id_turma):
+    aluno = (id_usuario, id_turma)
+    query = "SELECT * FROM tb_presenca_alunos WHERE id_usuario=%s AND id_turma = %s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, aluno)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return len(resposta)
 
+
+def geraRelatorioAluno(lista_turmas, id_usuario):
+    frequencias = []
+    for turma in lista_turmas:
+        info = {'turma': turma['nome_turma'], 'presenca': contaPresenca(id_usuario, turma['id_turma'])}
+        frequencias.append(info)
+    return frequencias

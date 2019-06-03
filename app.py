@@ -9,7 +9,7 @@ from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoorden
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from openCV import dimensoesImagem
 from banco_tb_turma_alunos import listaTurmasAluno, excluiTurmaAluno, cadastraTurmaAluno
-from banco_tb_presenca_alunos import buscaPresenca, marcaPresenca, geraRelatorioProfessor
+from banco_tb_presenca_alunos import buscaPresenca, marcaPresenca, geraRelatorioProfessor, geraRelatorioAluno
 import json
 
 app = Flask(__name__)
@@ -212,6 +212,14 @@ def cadastraNovaTurmaAluno():
     id_turma = request.form['id_turma']
     cadastraTurmaAluno(id_usuario, id_turma)
     return redirect('/')
+
+@app.route('/relatorio_aluno')
+def relatorioAluno():
+    id_usuario = session['id_usuario']
+    turmas = listaTurmasAluno(id_usuario)
+    turmas = [buscaTurma(turma['id_turma'])[0] for turma in turmas]
+    frequencias = geraRelatorioAluno(turmas, id_usuario)
+    return render_template('relatorio_aluno.html', frequencias=frequencias)
 
 
 @app.route('/uploads/<nome_arquivo>')
