@@ -92,4 +92,3 @@ def buscaChamadaIdChamada(id_chamada):
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta
 
-

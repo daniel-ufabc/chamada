@@ -48,7 +48,7 @@ def painel():
                         chamadas_ativas_presente.append(chamada)
                     elif buscaFaltas(session['id_usuario'], chamada['id_chamada']):
                         chamadas_ativas_ausente.append(chamada)
-                    else:
+                    elif chamada['id_status'] == 1:
                         chamadas_pendentes.append(chamada)
             chamadas_ativas_presente.sort(key=ordenaChamadas)
             chamadas_ativas_ausente.sort(key=ordenaChamadas)

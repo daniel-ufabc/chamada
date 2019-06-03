@@ -64,3 +64,4 @@ def mudaStatusCoordenada(id_coordenada):
     mycursor = mydb.cursor()
     mycursor.execute(query, coordenada)
     mydb.commit()
+
