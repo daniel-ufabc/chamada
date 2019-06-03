@@ -10,6 +10,7 @@ from flask import Flask, render_template, request, redirect, session, flash, sen
 from openCV import dimensoesImagem
 from banco_tb_turma_alunos import listaTurmasAluno, excluiTurmaAluno, cadastraTurmaAluno
 from banco_tb_presenca_alunos import buscaPresenca, marcaPresenca, geraRelatorioProfessor, geraRelatorioAluno
+from banco_tb_faltas_alunos import buscaFaltas, marcaFalta
 import json
 
 app = Flask(__name__)
@@ -38,14 +39,17 @@ def painel():
             turmas = listaTurmasAluno(session['id_usuario'])
             todas_turmas = buscaTodasAsTurmas()
             chamadas_pendentes = []
-            chamadas_ativas = []
+            chamadas_ativas_presente = []
+            chamadas_ativas_ausente = []
             for turma in turmas:
                 for chamada in buscaChamadaIdTurma(turma['id_turma']):
                     if buscaPresenca(session['id_usuario'], chamada['id_chamada']):
-                        chamadas_ativas.append(chamada)
+                        chamadas_ativas_presente.append(chamada)
+                    elif buscaFaltas(session['id_usuario'], chamada['id_chamada']):
+                        chamadas_ativas_ausente.append(chamada)
                     else:
                         chamadas_pendentes.append(chamada)
-            return render_template('index2.html', lista_de_turmas=turmas, buscaTurma=buscaTurma, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas, todas_turmas=todas_turmas)
+            return render_template('index2.html', lista_de_turmas=turmas, buscaTurma=buscaTurma, chamadas_pendentes=chamadas_pendentes, chamadas_ativas_presente=chamadas_ativas_presente , chamadas_ativas_ausente=chamadas_ativas_ausente, todas_turmas=todas_turmas)
     else:
         return redirect('/login')
 
@@ -221,6 +225,13 @@ def relatorioAluno():
     frequencias = geraRelatorioAluno(turmas, id_usuario)
     return render_template('relatorio_aluno.html', frequencias=frequencias)
 
+@app.route('/marcar_falta', methods=['POST'])
+def marcarFaltaAluno():
+    id_usuario = session['id_usuario']
+    id_turma = request.form['id_turma']
+    id_chamada = request.form['id_chamada']
+    marcaFalta(id_usuario, id_chamada,id_turma)
+    return redirect('/')
 
 @app.route('/uploads/<nome_arquivo>')
 def imagem(nome_arquivo):

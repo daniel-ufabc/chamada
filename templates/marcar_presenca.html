@@ -32,6 +32,11 @@
         <div class="my-5 text-center">
             <button class="btn btn-warning" onclick="removerSelecao()">Remover seleção</button>
             <button class="btn btn-success" id="botao_salvar" disabled="disabled" onclick="enviar()">Salvar, marcar presença</button>
+            <button class="btn btn-danger" onclick="enviarFalta()">Marcar falta</button>
+            <form id="form_marcarFalta" action="/marcar_falta" method="post">
+                <input hidden="hidden" type="text" name="id_chamada" value="{{ id_chamada }}">
+                <input hidden="hidden" type="text" name="id_turma" value="{{ id_turma }}">
+            </form>
         </div>
         <div class="row">
             <div class="col-12">
@@ -132,8 +137,10 @@ function enviar(){
     botao_submit.click();
 }
 
-
-
+function enviarFalta(){
+    let form_marcarFalta = document.getElementById('form_marcarFalta');
+    form_marcarFalta.submit();
+}
 
 let largura_imagem_original = {{ info_foto['largura'] }};
 let altura_imagem_original = {{ info_foto['altura'] }};

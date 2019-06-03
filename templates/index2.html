@@ -162,11 +162,18 @@
 						</tr>
 					</thead>
 					<tbody>
-					{% for chamada in chamadas_ativas %}
+					{% for chamada in chamadas_ativas_presente %}
 						<tr>
 							<td>{{ buscaTurma(chamada['id_turma'])[0]['nome_turma'] }}</td>
 							<td>{{ chamada['data_chamada'] }}</td>
 							<td>Presente</td>
+						</tr>
+					{% endfor %}
+					{% for chamada in chamadas_ativas_ausente %}
+						<tr>
+							<td>{{ buscaTurma(chamada['id_turma'])[0]['nome_turma'] }}</td>
+							<td>{{ chamada['data_chamada'] }}</td>
+							<td>Ausente</td>
 						</tr>
 					{% endfor %}
 					</tbody>
