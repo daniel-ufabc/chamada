@@ -28,3 +28,13 @@ def buscaRA(id_usuario):
     mycursor.execute(query, usuario)
     resposta = dicionario(mycursor.description, mycursor.fetchall())
     return resposta[0]
+
+def buscaIdRA(ra):
+    usuario = (ra,)
+    query = "SELECT id_usuario from tb_usuarios WHERE RA = %s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, usuario)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta[0]
+

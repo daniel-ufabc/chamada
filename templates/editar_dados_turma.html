@@ -24,6 +24,12 @@
     <div class="container my-5">
         <div>
             <button class="btn btn-outline-dark" type="button" onclick="adicionaHorario()"><i class="fas fa-plus"></i></button>
+            <form action="/tabela" method="post" enctype="multipart/form-data">
+                <input type="file" name="arquivo">
+                <input type="hidden" name="id_turma" value="{{ turma['id_turma'] }}">
+                <input type="submit" value="Clique">
+            </form>
+
         </div>
 
         <p>

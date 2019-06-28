@@ -1,5 +1,7 @@
 from conecta import conecta
 from funcoes_auxiliares import dicionario
+from banco_tb_usuarios import buscaIdRA
+import csv
 
 def listaTurmasAluno(id_usuario):
     usuario = (id_usuario,)
@@ -35,3 +37,10 @@ def cadastraTurmaAluno(id_usuario, id_turma):
         mycursor = mydb.cursor()
         mycursor.execute(query, turma)
         mydb.commit()
+
+def cadastraAlunos(tabela, id_turma):
+    for ra in csv.reader(tabela):
+        id_usuario = buscaIdRA(ra[0])['id_usuario']
+        cadastraTurmaAluno(id_usuario=id_usuario, id_turma=id_turma)
+
+

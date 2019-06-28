@@ -38,4 +38,3 @@ def adicionaHorario(id_turma, id_dia_semanal, horario):
         mycursor.execute(query, turma)
         mydb.commit()
 
-adicionaHorario(6, 14, 20)

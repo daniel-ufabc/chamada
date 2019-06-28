@@ -8,9 +8,12 @@ from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaF
 from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto, buscaCoordenadaAtiva
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from openCV import dimensoesImagem
-from banco_tb_turma_alunos import listaTurmasAluno, excluiTurmaAluno, cadastraTurmaAluno
+from banco_tb_turma_alunos import listaTurmasAluno, cadastraAlunos
 from banco_tb_presenca_alunos import buscaPresenca, marcaPresenca, geraRelatorioProfessor, geraRelatorioAluno
 from banco_tb_faltas_alunos import buscaFaltas, marcaFalta
+from random import random
+import os
+
 import json
 
 app = Flask(__name__)
@@ -140,12 +143,6 @@ def excluirChamada():
     excluiChamadaIdChamada(id_chamada)
     return redirect('/')
 
-@app.route('/remover_turma_aluno', methods=['POST'])
-def removeTurmaAluno():
-    id_usuario = session['id_usuario']
-    id_turma = request.form['id_turma']
-    excluiTurmaAluno(id_usuario, id_turma)
-    return redirect('/')
 
 @app.route('/marcar_presenca', methods=['POST'])
 def marcarPresenca():
@@ -209,12 +206,6 @@ def criaNovaTurma():
     criaTurma(id_usuario, nome_turma, campus)
     return redirect('/')
 
-@app.route('/cadastra_nova_turma_aluno', methods=['POST'])
-def cadastraNovaTurmaAluno():
-    id_usuario = session['id_usuario']
-    id_turma = request.form['id_turma']
-    cadastraTurmaAluno(id_usuario, id_turma)
-    return redirect('/')
 
 @app.route('/relatorio_aluno')
 def relatorioAluno():
@@ -230,6 +221,17 @@ def marcarFaltaAluno():
     id_turma = request.form['id_turma']
     id_chamada = request.form['id_chamada']
     marcaFalta(id_usuario, id_chamada,id_turma)
+    return redirect('/')
+
+@app.route('/tabela', methods=['POST'])
+def cadastraTabela():
+    arquivo = request.files['arquivo']
+    id_turma = request.form['id_turma']
+    id_tabela = random()
+    arquivo.save('uploads/{}tabela.csv'.format(id_tabela))
+    tabela = open('uploads/{}tabela.csv'.format(id_tabela), 'r')
+    cadastraAlunos(tabela, id_turma=id_turma)
+    os.remove('uploads/{}tabela.csv'.format(id_tabela))
     return redirect('/')
 
 @app.route('/uploads/<nome_arquivo>')

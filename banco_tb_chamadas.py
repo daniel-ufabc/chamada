@@ -2,6 +2,7 @@ from conecta import conecta
 from funcoes_auxiliares import dicionario
 from banco_tb_coordenadas import deletaCoordendasIdFoto
 from banco_tb_fotos import buscaFotoIdChamada, deletaFotoIdFoto
+import os
 
 
 def cadastraNovaChamada(id_usuario, id_turma, data_chamada):
@@ -59,6 +60,7 @@ def excluiChamadaIdChamada(id_chamada):
     info_foto = buscaFotoIdChamada(id_chamada)[0]
     deletaCoordendasIdFoto(info_foto['id_foto'])
     deletaFotoIdFoto(info_foto['id_foto'])
+    os.remove('uploads/{}'.format(info_foto['nome_arquivo']))
     query = "DELETE FROM tb_chamadas WHERE id_chamada=%s"
     mydb = conecta()
     mycursor = mydb.cursor()
