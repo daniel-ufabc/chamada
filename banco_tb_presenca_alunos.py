@@ -24,7 +24,7 @@ def marcaPresenca(id_usuario, id_chamada, id_coordenada, id_turma):
 
 def buscaPresencaIdTurma(id_turma):
     presenca = (id_turma,)
-    query = "SELECT * FROM tb_presenca_alunos WHERE id_turma = %s AND"
+    query = "SELECT * FROM tb_presenca_alunos WHERE id_turma = %s"
     mydb = conecta()
     mycursor = mydb.cursor()
     mycursor.execute(query, presenca)
@@ -55,10 +55,10 @@ def contaPresenca(id_usuario, id_turma):
     return len(resposta)
 
 
-
 def geraRelatorioAluno(lista_turmas, id_usuario):
     frequencias = []
     for turma in lista_turmas:
         info = {'turma': turma['nome_turma'], 'presenca': contaPresenca(id_usuario, turma['id_turma']), 'faltas': contaFaltas(id_usuario, turma['id_turma'])}
         frequencias.append(info)
     return frequencias
+
