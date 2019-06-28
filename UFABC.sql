@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 03, 2019 at 05:01 PM
+-- Generation Time: Jun 28, 2019 at 09:26 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.4
 
@@ -41,7 +41,8 @@ CREATE TABLE `tb_chamadas` (
 --
 
 INSERT INTO `tb_chamadas` (`id_chamada`, `id_usuario`, `data_chamada`, `id_turma`, `id_status`) VALUES
-(81, 1, '2013-06-19', 9, 1);
+(92, 1, '2013-06-19', 9, 1),
+(93, 1, '2014-06-19', 9, 0);
 
 -- --------------------------------------------------------
 
@@ -65,7 +66,8 @@ CREATE TABLE `tb_coordenadas` (
 --
 
 INSERT INTO `tb_coordenadas` (`id_coordenada`, `x`, `y`, `w`, `h`, `id_usuario`, `id_foto`, `id_status`) VALUES
-(1804, 168, 42, 127, 127, 1, 43, 1);
+(1898, 168, 42, 127, 127, 1, 54, 0),
+(1899, 168, 42, 127, 127, 1, 55, 0);
 
 -- --------------------------------------------------------
 
@@ -110,13 +112,6 @@ CREATE TABLE `tb_faltas_alunos` (
   `id_turma` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `tb_faltas_alunos`
---
-
-INSERT INTO `tb_faltas_alunos` (`id_usuario`, `id_chamada`, `id_turma`) VALUES
-(3, 81, 9);
-
 -- --------------------------------------------------------
 
 --
@@ -137,7 +132,8 @@ CREATE TABLE `tb_fotos` (
 --
 
 INSERT INTO `tb_fotos` (`id_foto`, `id_usuario`, `largura`, `altura`, `nome_arquivo`, `id_chamada`) VALUES
-(43, 1, 450, 312, '81.jpeg', 81);
+(54, 1, 450, 312, '92.jpeg', 92),
+(55, 1, 450, 312, '93.jpeg', 93);
 
 -- --------------------------------------------------------
 
@@ -182,19 +178,17 @@ CREATE TABLE `tb_turmas` (
   `id_usuario` int(11) NOT NULL,
   `nome_turma` varchar(200) NOT NULL,
   `id_status` int(11) NOT NULL DEFAULT '1',
-  `campus` varchar(100) NOT NULL,
-  `qtd_alunos` int(11) NOT NULL DEFAULT '0'
+  `campus` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `tb_turmas`
 --
 
-INSERT INTO `tb_turmas` (`id_turma`, `id_usuario`, `nome_turma`, `id_status`, `campus`, `qtd_alunos`) VALUES
-(6, 1, 'Bases Computacionais', 1, 'Santo Andre', 30),
-(9, 1, 'Calculo vetorial e tensorial', 1, 'Santo Andre', 50),
-(13, 1, 'Estrutura da materia', 0, 'Santo André', 0),
-(14, 1, 'sistemas digitais', 1, 'Santo André', 0);
+INSERT INTO `tb_turmas` (`id_turma`, `id_usuario`, `nome_turma`, `id_status`, `campus`) VALUES
+(6, 1, 'Bases Computacionais', 1, 'Santo Andre'),
+(9, 1, 'Calculo vetorial e tensorial', 1, 'Santo Andre'),
+(13, 1, 'Estrutura da materia', 0, 'Santo André');
 
 -- --------------------------------------------------------
 
@@ -212,7 +206,8 @@ CREATE TABLE `tb_turma_alunos` (
 --
 
 INSERT INTO `tb_turma_alunos` (`id_turma`, `id_usuario`) VALUES
-(9, 3);
+(6, 3),
+(6, 4);
 
 -- --------------------------------------------------------
 
@@ -256,7 +251,8 @@ CREATE TABLE `tb_usuarios` (
 INSERT INTO `tb_usuarios` (`id_usuario`, `email`, `senha`, `id_permissao`, `RA`) VALUES
 (1, 'prof1@gmail.com', '1234', 1, NULL),
 (2, 'prof2@gmail.com', '1234', 1, NULL),
-(3, 'aluno1@gmail.com', '1234', 0, 1120180000);
+(3, 'aluno1@gmail.com', '1234', 0, 1120180000),
+(4, 'aluno2@gmail.com', '1234', 0, 112017001);
 
 --
 -- Indexes for dumped tables
@@ -350,31 +346,31 @@ ALTER TABLE `tb_usuarios`
 -- AUTO_INCREMENT for table `tb_chamadas`
 --
 ALTER TABLE `tb_chamadas`
-  MODIFY `id_chamada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id_chamada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
 
 --
 -- AUTO_INCREMENT for table `tb_coordenadas`
 --
 ALTER TABLE `tb_coordenadas`
-  MODIFY `id_coordenada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1805;
+  MODIFY `id_coordenada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1900;
 
 --
 -- AUTO_INCREMENT for table `tb_fotos`
 --
 ALTER TABLE `tb_fotos`
-  MODIFY `id_foto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id_foto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `tb_turmas`
 --
 ALTER TABLE `tb_turmas`
-  MODIFY `id_turma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_turma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `tb_usuarios`
 --
 ALTER TABLE `tb_usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
