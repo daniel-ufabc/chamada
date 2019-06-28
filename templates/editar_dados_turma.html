@@ -22,51 +22,62 @@
 
     <!-- Conteudo -->
     <div class="container my-5">
-        <div>
+        <div class="my-3">
+            <span>Adicionar novo horario</span>
             <button class="btn btn-outline-dark" type="button" onclick="adicionaHorario()"><i class="fas fa-plus"></i></button>
-            <form action="/tabela" method="post" enctype="multipart/form-data">
-                <input type="file" name="arquivo">
-                <input type="hidden" name="id_turma" value="{{ turma['id_turma'] }}">
-                <input type="submit" value="Clique">
-            </form>
-
+                <h4 class="my-2">Cadastrar alunos</h4>
+                <form action="/tabela" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="custom-file my-2">
+                                <input accept="text/csv" type="file" class="custom-file-input" id="customFile" name="arquivo">
+                                <label class="custom-file-label" for="customFile">Escolha o arquivo csv</label>
+                                <input type="hidden" name="id_turma" value="{{ turma['id_turma'] }}">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <input class="btn btn-primary my-2" type="submit" value="Enviar">
+                        </div>
+                    </div>
+                </form>
         </div>
 
-        <p>
-            <span>Alunos: </span>
-            <span>{{ turma['qtd_alunos'] }}</span>
-        </p>
-        <p>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Dia da semana</th>
-                        <th>Semanal</th>
-                        <th>Horario do dia</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="tbody">
-                    {% for horario in horarios%}
+        <div class="my-5">
+            <div>
+                <span>Alunos: </span>
+                <span>{{ turma['qtd_alunos'] }}</span>
+            </div>
+            <div>
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>{{ horario['dia_da_semana'] }}</td>
-                            <td>{{ semanal(horario['id_dia_semanal'])}}</td>
-                            <td>{{ horario['horario'] }}<span>h</span></td>
-                            <td>
-                                <form action="/editar_dados_turma" method="post">
-                                    <input name="id_turma" hidden="hidden" type="text" value="{{ turma['id_turma'] }}">
-                                    <input name="id_dia_semanal" hidden="hidden" type="text" value="{{ horario['id_dia_semanal'] }}">
-                                    <input name="horario" hidden="hidden" type="text" value="{{ horario['horario'] }}">
-                                    <button class="btn btn-outline-danger" name="comando" value="excluir"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </td>
+                            <th>Dia da semana</th>
+                            <th>Semanal</th>
+                            <th>Horario do dia</th>
+                            <th></th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </p>
+                    </thead>
+                    <tbody id="tbody">
+                        {% for horario in horarios%}
+                            <tr>
+                                <td>{{ horario['dia_da_semana'] }}</td>
+                                <td>{{ semanal(horario['id_dia_semanal'])}}</td>
+                                <td>{{ horario['horario'] }}<span>h</span></td>
+                                <td>
+                                    <form action="/editar_dados_turma" method="post">
+                                        <input name="id_turma" hidden="hidden" type="text" value="{{ turma['id_turma'] }}">
+                                        <input name="id_dia_semanal" hidden="hidden" type="text" value="{{ horario['id_dia_semanal'] }}">
+                                        <input name="horario" hidden="hidden" type="text" value="{{ horario['horario'] }}">
+                                        <button class="btn btn-outline-danger" name="comando" value="excluir"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
 </body>
 
 <script>
@@ -186,6 +197,13 @@ function criaInputComando(){
 }
 
 
+</script>
+
+<script>
+$(".custom-file-input").on("change", function() {
+  var fileName = $(this).val().split("\\").pop();
+  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
 </script>
 
 </html>

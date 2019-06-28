@@ -8,7 +8,7 @@ from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaF
 from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto, buscaCoordenadaAtiva
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from openCV import dimensoesImagem
-from banco_tb_turma_alunos import listaTurmasAluno, cadastraAlunos
+from banco_tb_turma_alunos import listaTurmasAluno, cadastraAlunos, buscaTamanhoTurma
 from banco_tb_presenca_alunos import buscaPresenca, marcaPresenca, geraRelatorioProfessor, geraRelatorioAluno
 from banco_tb_faltas_alunos import buscaFaltas, marcaFalta
 from random import random
@@ -24,6 +24,8 @@ def painel():
     if 'autenticado' in session and session['autenticado']:
         if session['id_permissao'] == 1:
             turmas = listaTurmas(session['id_usuario'])
+            for i, turma in enumerate(turmas):
+                turmas[i]['qtd_alunos'] = buscaTamanhoTurma(turma['id_turma'])
             chamadas_pendentes = listaChamadasPendentes(session['id_usuario'])
             chamadas_ativas = listaChamadasAtivas(session['id_usuario'])
             chamadas_ativas.sort(key=ordenaChamadas, reverse=True)
@@ -34,7 +36,7 @@ def painel():
                     for horario in horarios:
                         h = {'nome': turma['nome_turma'], 'dia_semanal': horario['id_dia_semanal'], 'horario': horario['horario'] }
                         horario_turmas.append(h)
-            return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas, buscaFacesIdFoto=buscaFacesIdFoto, buscaCoordenadaAtiva=buscaCoordenadaAtiva, buscaFotoIdChamada=buscaFotoIdChamada, len=len, horario_turmas=horario_turmas)
+            return render_template('index.html', lista_de_turmas=turmas, removeEspaco=removeEspaco, buscaHorarioTurma=buscaHorarioTurma, semanal=semanal, chamadas_pendentes=chamadas_pendentes, chamadas_ativas=chamadas_ativas, buscaFacesIdFoto=buscaFacesIdFoto, buscaCoordenadaAtiva=buscaCoordenadaAtiva, buscaFotoIdChamada=buscaFotoIdChamada, len=len, horario_turmas=horario_turmas   )
         if session['id_permissao'] == 0:
             turmas = listaTurmasAluno(session['id_usuario'])
             todas_turmas = buscaTodasAsTurmas()
@@ -195,6 +197,7 @@ def editarDadosTurma():
     else:
         id_turma = request.form['id_turma_editar']
     turma = buscaTurma(id_turma)[0]
+    turma['qtd_alunos'] = buscaTamanhoTurma(turma['id_turma'])
     horarios = buscaHorarioTurma(id_turma)
     return render_template('editar_dados_turma.html', horarios=horarios, turma=turma, semanal=semanal)
 

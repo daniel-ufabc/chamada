@@ -43,4 +43,12 @@ def cadastraAlunos(tabela, id_turma):
         id_usuario = buscaIdRA(ra[0])['id_usuario']
         cadastraTurmaAluno(id_usuario=id_usuario, id_turma=id_turma)
 
+def buscaTamanhoTurma(id_turma):
+    turma = (id_turma,)
+    query = "SELECT * FROM tb_turma_alunos WHERE id_turma= %s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, turma)
+    return len(mycursor.fetchall())
+
 
