@@ -51,4 +51,13 @@ def buscaTamanhoTurma(id_turma):
     mycursor.execute(query, turma)
     return len(mycursor.fetchall())
 
+def listaAlunosTurma(id_turma):
+    turma = (id_turma,)
+    query = "SELECT * FROM tb_turma_alunos WHERE id_turma= %s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, turma)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
+
 

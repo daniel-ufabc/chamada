@@ -20,7 +20,7 @@
         </nav>
     </div>
 
-    <div class="container" id="container">
+    <div class="container mt-5" id="container">
 
     </div>
 
@@ -54,20 +54,36 @@
                 div.style.backgroundPositionX = (-x) * razao + "px";
             let div_principal = document.createElement('div');
                 div_principal.style.width = w_final + "px";
+                let h1 = document.createElement('h4');
+                    h1.innerHTML = "RA: " + ra;
+                div_principal.appendChild(h1);
                 div_principal.appendChild(div);
             let body = document.getElementById(ra);
                 body.appendChild(div_principal);
         }
 
+    {% for aluno in lista_alunos %}
+        criaDivRa({{ aluno['id_usuario'] }});
+    {% endfor %}
 
-        criaDivRa('1121');
-        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
-        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
-        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
-        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
-        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
-        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
-        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
-        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
+
+    {% for aluno in lista_alunos %}
+        {% set coordenadas = busca_coordenadas(aluno['id_usuario']) %}
+        {% set ra = aluno['id_usuario'] %}
+        {% for coordenada in coordenadas %}
+            {% set c = buscaCoordenada(coordenada['id_coordenada'])[0] %}
+            {% set w = c['w'] %}
+            {% set h = c['h'] %}
+            {% set x = c['x'] %}
+            {% set y = c['y'] %}
+            {% set id_foto = c['id_foto'] %}
+            {% set foto = buscaFoto(id_foto)[0] %}
+            {% set largura = foto['largura'] %}
+            {% set altura = foto['altura'] %}
+            {% set src = url_for('imagem', nome_arquivo=foto['nome_arquivo']) %}
+            criaDiv({{ largura }}, {{ altura }}, {{ w }}, {{ h }}, {{ x }}, {{ y }}, "{{ src }}", {{ ra }});
+        {% endfor %}
+    {% endfor %}
+
 </script>
 </html>

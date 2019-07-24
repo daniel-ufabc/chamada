@@ -4,11 +4,11 @@ from banco_tb_usuarios import buscaUsuario, buscaRA
 from banco_tb_turmas import listaTurmas, desativaTurma, buscaTurma, ativaTurma, criaTurma, buscaTodasAsTurmas
 from banco_tb_chamadas import buscaChamada, cadastraNovaChamada, listaChamadasPendentes, publicaChamadaIdChamada, excluiChamadaIdChamada, listaChamadasAtivas, buscaChamadaIdTurma, buscaChamadaIdChamada
 from banco_turma_horarios import buscaHorarioTurma, excluirHorario, adicionaHorario
-from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaFotoIdChamada
-from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto, buscaCoordenadaAtiva
+from banco_tb_fotos import cadastraNovafoto, atualizaDimensao, buscaFoto, buscaFotoIdChamada, buscaFotoIdFoto
+from banco_tb_coordenadas import detectaFaces, buscaFacesIdFoto, cadastraCoordenada, deletaCoordendasIdFoto, buscaCoordenadaAtiva, buscaCoordenadasIdUsuario, buscaCoordenada
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from openCV import dimensoesImagem
-from banco_tb_turma_alunos import listaTurmasAluno, cadastraAlunos, buscaTamanhoTurma
+from banco_tb_turma_alunos import listaTurmasAluno, cadastraAlunos, buscaTamanhoTurma, listaAlunosTurma
 from banco_tb_presenca_alunos import buscaPresenca, marcaPresenca, geraRelatorioProfessor, geraRelatorioAluno
 from banco_tb_faltas_alunos import buscaFaltas, marcaFalta
 from random import random
@@ -171,13 +171,21 @@ def relatorioProfessor():
     frequencias = geraRelatorioProfessor(lista_turmas)
     return render_template('relatorio_professor.html', frequencias=frequencias, buscaRA=buscaRA)
 
+@app.route('/info_relatorio')
+def info_relatorio():
+    id_turma = 6
+    lista_alunos = listaAlunosTurma(id_turma)
+    return render_template('info_relatorio.html', nomeArquivo='a', lista_alunos=lista_alunos, busca_coordenadas=buscaCoordenadasIdUsuario, buscaFoto=buscaFotoIdFoto, buscaCoordenada=buscaCoordenada)
+
+
+
 @app.route('/detalhes_chamada', methods=['POST'])
 def detalhesChamada():
     id_chamada = request.form['id_chamada']
     info_foto = buscaFotoIdChamada(id_chamada)[0]
     nome_arquivo = info_foto['nome_arquivo']
     coordenadas_faces = buscaFacesIdFoto(info_foto['id_foto'])
-    return render_template('info_chamada_professor.html', nome_arquivo=nome_arquivo, faces=coordenadas_faces, info_foto=info_foto)
+    return render_template('info_chamada_professor.html', faces=coordenadas_faces, info_foto=info_foto)
 
 @app.route('/editar_dados_turma', methods=['POST'])
 def editarDadosTurma():
@@ -238,7 +246,7 @@ def cadastraTabela():
     return redirect('/')
 
 @app.route('/info')
-def inf():
+def info():
     return render_template('info_relatorio.html')
 
 

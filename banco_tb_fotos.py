@@ -38,10 +38,18 @@ def buscaFotoIdChamada(id_chamada):
 def deletaFotoIdFoto(id_foto):
     foto = (id_foto,)
     query = "DELETE FROM tb_fotos WHERE id_foto=%s"
-
     mydb = conecta()
     mycursor = mydb.cursor()
     mycursor.execute(query, foto)
     mydb.commit()
+
+def buscaFotoIdFoto(id_foto):
+    foto = (id_foto,)
+    query = "SELECT * FROM tb_fotos WHERE id_foto=%s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, foto)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
 
 

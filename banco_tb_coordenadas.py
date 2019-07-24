@@ -65,3 +65,12 @@ def mudaStatusCoordenada(id_coordenada):
     mycursor.execute(query, coordenada)
     mydb.commit()
 
+def buscaCoordenadasIdUsuario(id_usuario):
+    coordenada = (id_usuario,)
+    query = "SELECT * FROM tb_presenca_alunos WHERE id_usuario = %s"
+    mydb = conecta()
+    mycursor = mydb.cursor()
+    mycursor.execute(query, coordenada)
+    resposta = dicionario(mycursor.description, mycursor.fetchall())
+    return resposta
+
