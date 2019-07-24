@@ -175,7 +175,7 @@ def relatorioProfessor():
 def info_relatorio():
     id_turma = 6
     lista_alunos = listaAlunosTurma(id_turma)
-    return render_template('info_relatorio.html', nomeArquivo='a', lista_alunos=lista_alunos, busca_coordenadas=buscaCoordenadasIdUsuario, buscaFoto=buscaFotoIdFoto, buscaCoordenada=buscaCoordenada)
+    return render_template('info_relatorio.html', lista_alunos=lista_alunos, busca_coordenadas=buscaCoordenadasIdUsuario, buscaFoto=buscaFotoIdFoto, buscaCoordenada=buscaCoordenada)
 
 
 
