@@ -237,6 +237,11 @@ def cadastraTabela():
     os.remove('uploads/{}tabela.csv'.format(id_tabela))
     return redirect('/')
 
+@app.route('/info')
+def inf():
+    return render_template('info_relatorio.html')
+
+
 @app.route('/uploads/<nome_arquivo>')
 def imagem(nome_arquivo):
     return send_from_directory('uploads', nome_arquivo)

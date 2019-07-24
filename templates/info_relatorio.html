@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <title>Sistema de contagem de faltas</title>
+</head>
+<body>
+    <!-- Topo -->
+    <div class="container">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="/">
+                <img src="../static/css/ufabc-logo.svg" width="50" height="50" class="mr-2"><span>UFABC</span>
+            </a>
+            <a href="/logout" class="btn btn-outline-danger">Sair</a>
+        </nav>
+    </div>
+
+    <div class="container" id="container">
+
+    </div>
+
+</body>
+<script>
+        function criaDivRa(ra){
+            let div_container = document.getElementById('container');
+            let div = document.createElement('div');
+            div.setAttribute('id', ra);
+            div.setAttribute('class', 'd-flex flex-wrap');
+            div_container.appendChild(div);
+        }
+
+
+
+        function criaDiv(largura, altura, w, h, x, y, src, ra){
+            const w_final = 150;
+            const h_final = 150;
+
+            const razao = w_final/w;
+            console.log(razao);
+
+            let largura_foto_final = largura * razao;
+            let altura_foto_final = altura * razao;
+
+            let div = document.createElement('div');
+                div.style.backgroundImage = "url(" + src +")";
+                div.style.height = h_final + "px";
+                div.style.backgroundSize = largura_foto_final + "px";
+                div.style.backgroundPositionY = (-y) * razao + "px";
+                div.style.backgroundPositionX = (-x) * razao + "px";
+            let div_principal = document.createElement('div');
+                div_principal.style.width = w_final + "px";
+                div_principal.appendChild(div);
+            let body = document.getElementById(ra);
+                body.appendChild(div_principal);
+        }
+
+
+        criaDivRa('1121');
+        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
+        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
+        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
+        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
+        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
+        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
+        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
+        criaDiv(600, 400, 60, 60, 440, 122, src, 1121);
+</script>
+</html>
