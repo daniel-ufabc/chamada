@@ -28,10 +28,16 @@
 <script>
         function criaDivRa(ra){
             let div_container = document.getElementById('container');
-            let div = document.createElement('div');
-            div.setAttribute('id', ra);
-            div.setAttribute('class', 'd-flex flex-wrap');
-            div_container.appendChild(div);
+            let div_principal = document.createElement('div');
+                let h4 = document.createElement('h4');
+                    h4.innerHTML = "RA: " + ra;
+                    div_principal.appendChild(h4);
+                    div_principal.setAttribute('class', 'mt-5 mb-5');
+                    let div = document.createElement('div');
+                        div.setAttribute('id', ra);
+                        div.setAttribute('class', 'd-flex flex-wrap');
+                div_principal.appendChild(div);
+            div_container.appendChild(div_principal);
         }
 
 
@@ -54,9 +60,6 @@
                 div.style.backgroundPositionX = (-x) * razao + "px";
             let div_principal = document.createElement('div');
                 div_principal.style.width = w_final + "px";
-                let h1 = document.createElement('h4');
-                    h1.innerHTML = "RA: " + ra;
-                div_principal.appendChild(h1);
                 div_principal.appendChild(div);
             let body = document.getElementById(ra);
                 body.appendChild(div_principal);
