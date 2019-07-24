@@ -171,9 +171,9 @@ def relatorioProfessor():
     frequencias = geraRelatorioProfessor(lista_turmas)
     return render_template('relatorio_professor.html', frequencias=frequencias, buscaRA=buscaRA)
 
-@app.route('/info_relatorio')
+@app.route('/info_relatorio', methods=['POST'])
 def info_relatorio():
-    id_turma = 6
+    id_turma = request.form['id_turma']
     lista_alunos = listaAlunosTurma(id_turma)
     return render_template('info_relatorio.html', lista_alunos=lista_alunos, busca_coordenadas=buscaCoordenadasIdUsuario, buscaFoto=buscaFotoIdFoto, buscaCoordenada=buscaCoordenada)
 
@@ -185,7 +185,7 @@ def detalhesChamada():
     info_foto = buscaFotoIdChamada(id_chamada)[0]
     nome_arquivo = info_foto['nome_arquivo']
     coordenadas_faces = buscaFacesIdFoto(info_foto['id_foto'])
-    return render_template('info_chamada_professor.html', faces=coordenadas_faces, info_foto=info_foto)
+    return render_template('info_chamada_professor.html', nome_arquivo=nome_arquivo, faces=coordenadas_faces, info_foto=info_foto)
 
 @app.route('/editar_dados_turma', methods=['POST'])
 def editarDadosTurma():
@@ -244,11 +244,6 @@ def cadastraTabela():
     cadastraAlunos(tabela, id_turma=id_turma)
     os.remove('uploads/{}tabela.csv'.format(id_tabela))
     return redirect('/')
-
-@app.route('/info')
-def info():
-    return render_template('info_relatorio.html')
-
 
 @app.route('/uploads/<nome_arquivo>')
 def imagem(nome_arquivo):

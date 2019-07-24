@@ -27,6 +27,10 @@
     {% for turma in frequencias %}
 		<div class="my-5">
 			<h3>{{ turma['nome_turma'] }}</h3>
+			<form method="post" action="/info_relatorio">
+				<input name="id_turma" type="hidden" value="{{turma['id_turma']}}">
+				<button class="btn btn-warning">Visualizar detalhes</button>
+			</form>
 			<table class="table">
 				<thead>
 					<tr>
